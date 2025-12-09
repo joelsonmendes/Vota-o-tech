@@ -852,6 +852,10 @@
             background: linear-gradient(90deg, var(--tech-red), #ff6b81);
         }
 
+        .admin-btn.secondary {
+            background: linear-gradient(90deg, var(--tech-orange), #ff9500);
+        }
+
         .project-list {
             max-height: 300px;
             overflow-y: auto;
@@ -942,6 +946,111 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, var(--neon-cyan), var(--electric-blue));
+        }
+
+        /* Botões de ação nos projetos */
+        .project-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: var(--electric-blue);
+            color: white;
+        }
+
+        .delete-btn {
+            background: var(--tech-red);
+            color: white;
+        }
+
+        .save-btn {
+            background: var(--tech-green);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: var(--tech-orange);
+            color: white;
+        }
+
+        /* Modal de edição */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 234, 255, 0.3);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+        
+        .modal-btn {
+            padding: 10px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.confirm {
+            background: var(--tech-red);
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Indicador de voto registrado */
+        .voted-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--tech-green);
+            color: var(--bg-primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -1090,7 +1199,9 @@
                 <!-- Projects list for admin -->
             </div>
             
+            <h4 style="margin-top: 30px;">⚙️ FUNÇÕES DE ADMIN</h4>
             <button class="admin-btn reset" id="resetVotes">🔄 RESETAR VOTOS</button>
+            <button class="admin-btn secondary" id="editProjects">✏️ EDITAR PROJETOS</button>
             <button class="admin-btn reset" id="resetAll">💀 RESETAR TUDO</button>
         </div>
     </div>
@@ -1098,429 +1209,332 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
+    <!-- Modal de edição de projeto -->
+    <div class="modal" id="editProjectModal">
+        <div class="modal-content">
+            <h3 style="color: var(--electric-blue); margin-bottom: 15px;">✏️ EDITAR PROJETO</h3>
+            <input type="hidden" id="editProjectId">
+            <input type="text" class="admin-input" id="editProjectName" placeholder="Nome do Projeto">
+            <input type="text" class="admin-input" id="editProjectIcon" placeholder="Ícone (emoji)">
+            <input type="text" class="admin-input" id="editProjectDescription" placeholder="Descrição">
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelEdit">Cancelar</button>
+                <button class="modal-btn confirm" id="saveEdit">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 style="color: var(--tech-red); margin-bottom: 15px;">⚠️ CONFIRMAR AÇÃO</h3>
+            <p id="modalMessage" style="color: var(--text-secondary);"></p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="modalCancel">Cancelar</button>
+                <button class="modal-btn confirm" id="modalConfirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ============================================
-        // CONFIGURAÇÃO FIREBASE - SUAS CREDENCIAIS
-        // ============================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDe129Wa9FpAsAW4tju11JEWHJCOHU-AFw",
-            authDomain: "senai-voting-system.firebaseapp.com",
-            projectId: "senai-voting-system",
-            storageBucket: "senai-voting-system.firebasestorage.app",
-            messagingSenderId: "655505664280",
-            appId: "1:655505664280:web:e5fa350aca6abb487dd66d"
-        };
-
-        // ============================================
-        // INICIALIZAÇÃO FIREBASE
-        // ============================================
-        let firebaseApp = null;
-        let firestore = null;
-
-        function initFirebase() {
-            if (!firebaseApp && window.firebase) {
-                try {
-                    firebaseApp = window.firebase.initializeApp(firebaseConfig);
-                    firestore = window.firebase.firestore();
-                    console.log('✅ Firebase inicializado com sucesso');
-                    return true;
-                } catch (error) {
-                    console.error('❌ Erro ao inicializar Firebase:', error);
-                    return false;
-                }
-            }
-            return !!firebaseApp;
-        }
-
-        function getFirestore() {
-            if (!firestore) {
-                initFirebase();
-            }
-            return firestore;
-        }
-
         // ============================================
         // CONFIGURAÇÃO DO SISTEMA
         // ============================================
-        const ADMIN_PASSWORD = "arcanjo12";
-        const STUDENT_WEIGHT = 1;
-        const VISITOR_WEIGHT = 3;
-
-        let projects = [];
-        let currentUserType = null;
-        let hasVoted = false;
-        let chartInstance = null;
-        let isAdminAuthenticated = false;
-        let userId = null;
-        let dbConnected = false;
+        const CONFIG = {
+            ADMIN_PASSWORD: "arcanjo12",
+            STUDENT_WEIGHT: 1,
+            VISITOR_WEIGHT: 3,
+            FIREBASE_CONFIG: {
+                apiKey: "AIzaSyDe129Wa9FpAsAW4tju11JEWHJCOHU-AFw",
+                authDomain: "senai-voting-system.firebaseapp.com",
+                projectId: "senai-voting-system",
+                storageBucket: "senai-voting-system.firebasestorage.app",
+                messagingSenderId: "655505664280",
+                appId: "1:655505664280:web:e5fa350aca6abb487dd66d"
+            }
+        };
 
         // ============================================
-        // FUNÇÕES DE BANCO DE DADOS FIREBASE
+        // ESTADO DO SISTEMA
         // ============================================
-        async function initializeDatabase() {
+        const STATE = {
+            projects: [],
+            currentUserType: null,
+            hasVoted: false,
+            chartInstance: null,
+            isAdminAuthenticated: false,
+            userId: null,
+            dbConnected: false,
+            firebaseApp: null,
+            firestore: null
+        };
+
+        // ============================================
+        // FUNÇÕES UTILITÁRIAS
+        // ============================================
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            toast.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function showConnectionStatus(message, status) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (!statusElement) return;
+            
+            statusElement.style.display = 'flex';
+            statusElement.querySelector('span').textContent = message;
+            
+            const indicator = statusElement.querySelector('.status-indicator');
+            if (indicator) {
+                indicator.className = 'status-indicator ' + status;
+            }
+        }
+
+        function calculateTotalPoints(project) {
+            if (!project) return 0;
+            return (project.studentVotes * CONFIG.STUDENT_WEIGHT) + 
+                   (project.visitorVotes * CONFIG.VISITOR_WEIGHT);
+        }
+
+        // ============================================
+        // FUNÇÕES DE FIREBASE
+        // ============================================
+        async function initializeFirebase() {
             try {
                 showConnectionStatus('Conectando ao Firebase...', 'disconnected');
                 
+                if (!window.firebase) {
+                    throw new Error('Firebase SDK não carregado');
+                }
+                
                 // Inicializar Firebase
-                const firebaseReady = initFirebase();
-                if (!firebaseReady) {
-                    throw new Error('Firebase não disponível');
+                STATE.firebaseApp = window.firebase.initializeApp(CONFIG.FIREBASE_CONFIG);
+                STATE.firestore = window.firebase.firestore();
+                
+                // Gerar ID do usuário
+                STATE.userId = localStorage.getItem('senai_user_id');
+                if (!STATE.userId) {
+                    STATE.userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('senai_user_id', STATE.userId);
                 }
                 
-                // Gerar ID único para o usuário
-                userId = localStorage.getItem('senai_user_id');
-                if (!userId) {
-                    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('senai_user_id', userId);
-                }
+                // Testar conexão
+                await STATE.firestore.collection('test').doc('test').get();
                 
-                // Carregar projetos
-                const loaded = await loadProjectsFromFirebase();
-                
-                if (loaded) {
-                    dbConnected = true;
-                    showConnectionStatus('Conectado ao Firebase ✅', 'connected');
-                    
-                    // Verificar se usuário já votou
-                    await checkIfUserVoted();
-                    
-                    showToast('✅ Conectado ao banco de dados em tempo real', 'success');
-                    return true;
-                } else {
-                    showConnectionStatus('Usando dados locais', 'disconnected');
-                    showToast('📴 Modo offline ativado', 'info');
-                    return false;
-                }
+                STATE.dbConnected = true;
+                showConnectionStatus('Conectado ao Firebase ✅', 'connected');
+                return true;
                 
             } catch (error) {
-                console.error('Erro ao inicializar Firebase:', error);
-                showConnectionStatus('Erro na conexão', 'disconnected');
-                
-                // Fallback para localStorage
-                loadFromLocalStorage();
-                
-                if (projects.length === 0) {
-                    projects = getDefaultProjects();
-                    saveToLocalStorage();
-                }
-                
-                showToast('⚠️ Usando dados locais (offline)', 'warning');
+                console.error('Erro ao conectar com Firebase:', error);
+                STATE.dbConnected = false;
+                showConnectionStatus('Modo offline', 'disconnected');
                 return false;
             }
         }
 
-        async function loadProjectsFromFirebase() {
+        async function loadProjects() {
             try {
-                console.log('🔄 Carregando projetos do Firebase...');
+                // Carregar do localStorage primeiro
+                loadFromLocalStorage();
                 
-                const db = getFirestore();
-                if (!db) {
-                    console.log('❌ Firestore não disponível');
-                    return false;
+                if (STATE.dbConnected && STATE.firestore) {
+                    // Tentar carregar do Firebase
+                    const snapshot = await STATE.firestore.collection('projects').get();
+                    
+                    if (!snapshot.empty) {
+                        STATE.projects = [];
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            STATE.projects.push({
+                                id: doc.id,
+                                name: data.name || 'Sem nome',
+                                icon: data.icon || '⭐',
+                                description: data.description || 'Sem descrição',
+                                votes: data.votes || 0,
+                                studentVotes: data.studentVotes || 0,
+                                visitorVotes: data.visitorVotes || 0
+                            });
+                        });
+                        
+                        saveToLocalStorage();
+                    } else if (STATE.projects.length === 0) {
+                        // Se não houver projetos, criar padrão
+                        STATE.projects = getDefaultProjects();
+                        await seedDefaultProjects();
+                    }
+                } else if (STATE.projects.length === 0) {
+                    // Modo offline sem projetos
+                    STATE.projects = getDefaultProjects();
+                    saveToLocalStorage();
                 }
                 
-                // Buscar projetos do Firestore
-                const snapshot = await db.collection('projects').get();
-                
-                if (snapshot.empty) {
-                    console.log('📭 Nenhum projeto encontrado. Inserindo dados padrão...');
-                    await seedDefaultProjects();
-                    return await loadProjectsFromFirebase(); // Recarregar
-                }
-                
-                // Converter documentos para array
-                projects = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    projects.push({
-                        id: doc.id,
-                        name: data.name || 'Sem nome',
-                        icon: data.icon || '⭐',
-                        description: data.description || 'Sem descrição',
-                        votes: data.votes || 0,
-                        studentVotes: data.studentVotes || 0,
-                        visitorVotes: data.visitorVotes || 0
-                    });
-                });
-                
-                console.log(`✅ ${projects.length} projetos carregados do Firebase`);
-                
-                // Ordenar por pontos
-                projects.sort((a, b) => calculateTotalPoints(b) - calculateTotalPoints(a));
-                
-                // Salvar localmente como backup
-                saveToLocalStorage();
-                
+                console.log('Projetos carregados:', STATE.projects);
                 return true;
                 
             } catch (error) {
-                console.error('❌ Erro ao carregar do Firebase:', error);
+                console.error('Erro ao carregar projetos:', error);
                 return false;
             }
         }
 
         async function seedDefaultProjects() {
+            if (!STATE.dbConnected || !STATE.firestore) return;
+            
             try {
-                const db = getFirestore();
-                if (!db) return false;
+                const defaultProjects = getDefaultProjects();
                 
-                const defaultProjects = [
-                    {
-                        name: 'Guia de Soluções SENAI',
-                        icon: '📚',
-                        description: 'Guia completo de soluções industriais com metodologias e cases do SENAI para transformação digital.',
-                        votes: 15,
-                        studentVotes: 12,
-                        visitorVotes: 1
-                    },
-                    {
-                        name: 'Controle IoT',
-                        icon: '📡',
-                        description: 'Gerencie dispositivos conectados em tempo real com nossa plataforma intuitiva e segura.',
-                        votes: 14,
-                        studentVotes: 11,
-                        visitorVotes: 1
-                    },
-                    {
-                        name: 'Dashboard Industrial',
-                        icon: '📊',
-                        description: 'Monitore métricas críticas de produção e eficiência com visualizações avançadas.',
-                        votes: 12,
-                        studentVotes: 10,
-                        visitorVotes: 0
-                    },
-                    {
-                        name: 'Automação 4.0',
-                        icon: '🤖',
-                        description: 'Automatize processos industriais com scripts inteligentes e integração perfeita.',
-                        votes: 10,
-                        studentVotes: 9,
-                        visitorVotes: 0
-                    },
-                    {
-                        name: 'Biblioteca de Templates',
-                        icon: '📋',
-                        description: 'Acesse modelos prontos para documentação técnica, relatórios e projetos industriais.',
-                        votes: 8,
-                        studentVotes: 8,
-                        visitorVotes: 0
-                    }
-                ];
-                
-                const batch = db.batch();
-                
-                defaultProjects.forEach(project => {
-                    const docRef = db.collection('projects').doc();
-                    batch.set(docRef, project);
-                });
-                
-                await batch.commit();
-                console.log('✅ Dados padrão inseridos no Firebase');
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Erro ao inserir dados padrão:', error);
-                return false;
-            }
-        }
-
-        async function checkIfUserVoted() {
-            try {
-                const db = getFirestore();
-                if (!db || !userId) return;
-                
-                const snapshot = await db
-                    .collection('votes')
-                    .where('userId', '==', userId)
-                    .limit(1)
-                    .get();
-                
-                if (!snapshot.empty) {
-                    hasVoted = true;
-                    console.log('✅ Usuário já votou anteriormente');
+                for (const project of defaultProjects) {
+                    await STATE.firestore.collection('projects').add({
+                        name: project.name,
+                        icon: project.icon,
+                        description: project.description,
+                        votes: project.votes,
+                        studentVotes: project.studentVotes,
+                        visitorVotes: project.visitorVotes
+                    });
                 }
                 
+                console.log('Projetos padrão criados no Firebase');
             } catch (error) {
-                console.error('Erro ao verificar votos:', error);
+                console.error('Erro ao criar projetos padrão:', error);
             }
         }
 
-        async function saveVoteToFirebase(projectId) {
+        async function saveVote(projectId) {
+            if (!STATE.currentUserType) {
+                showToast('Selecione seu tipo primeiro!', 'error');
+                return false;
+            }
+            
+            if (STATE.hasVoted) {
+                showToast('Você já votou!', 'error');
+                return false;
+            }
+            
+            const project = STATE.projects.find(p => p.id === projectId);
+            if (!project) {
+                showToast('Projeto não encontrado!', 'error');
+                return false;
+            }
+            
             try {
-                const db = getFirestore();
-                if (!db) return false;
-                
-                // Registrar voto
-                await db.collection('votes').add({
-                    userId: userId,
-                    projectId: projectId,
-                    userType: currentUserType,
-                    timestamp: window.firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Atualizar contadores do projeto
-                const projectRef = db.collection('projects').doc(projectId);
-                const project = projects.find(p => p.id === projectId);
-                
-                if (!project) return false;
-                
-                // Atualizar localmente primeiro
+                // Atualizar localmente
                 project.votes += 1;
-                if (currentUserType === 'student') {
+                if (STATE.currentUserType === 'student') {
                     project.studentVotes += 1;
                 } else {
                     project.visitorVotes += 1;
                 }
                 
-                // Atualizar no Firebase
-                await projectRef.update({
-                    votes: project.votes,
-                    studentVotes: project.studentVotes,
-                    visitorVotes: project.visitorVotes
-                });
-                
-                hasVoted = true;
+                STATE.hasVoted = true;
                 saveToLocalStorage();
                 
-                console.log('✅ Voto salvo no Firebase');
+                // Salvar no Firebase se conectado
+                if (STATE.dbConnected && STATE.firestore) {
+                    await STATE.firestore.collection('votes').add({
+                        userId: STATE.userId,
+                        projectId: projectId,
+                        userType: STATE.currentUserType,
+                        timestamp: new Date()
+                    });
+                    
+                    await STATE.firestore.collection('projects').doc(projectId).update({
+                        votes: project.votes,
+                        studentVotes: project.studentVotes,
+                        visitorVotes: project.visitorVotes
+                    });
+                }
+                
+                showToast(`Voto registrado em ${project.name}!`, 'success');
                 return true;
                 
             } catch (error) {
-                console.error('❌ Erro ao salvar voto no Firebase:', error);
+                console.error('Erro ao salvar voto:', error);
+                showToast('Erro ao salvar voto', 'error');
                 return false;
             }
         }
 
-        // ============================================
-        // FUNÇÕES DE ADMINISTRAÇÃO FIREBASE
-        // ============================================
-        async function addProjectToFirebase(name, icon, description) {
+        async function addProjectToFirebase(project) {
+            if (!STATE.dbConnected || !STATE.firestore) return null;
+            
             try {
-                const db = getFirestore();
-                if (!db) return null;
-                
-                const newProject = {
-                    name: name,
-                    icon: icon || '⭐',
-                    description: description || 'Nova ferramenta do ecossistema SENAI.',
+                const docRef = await STATE.firestore.collection('projects').add({
+                    name: project.name,
+                    icon: project.icon,
+                    description: project.description,
                     votes: 0,
                     studentVotes: 0,
-                    visitorVotes: 0,
-                    createdAt: window.firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                const docRef = await db.collection('projects').add(newProject);
-                
-                // Adicionar localmente
-                projects.push({
-                    id: docRef.id,
-                    ...newProject
+                    visitorVotes: 0
                 });
                 
-                console.log('✅ Projeto adicionado ao Firebase:', docRef.id);
                 return docRef.id;
-                
             } catch (error) {
-                console.error('❌ Erro ao adicionar projeto:', error);
+                console.error('Erro ao adicionar projeto no Firebase:', error);
                 return null;
             }
         }
 
-        async function resetAllVotesInFirebase() {
+        async function updateProjectInFirebase(projectId, updates) {
+            if (!STATE.dbConnected || !STATE.firestore) return false;
+            
             try {
-                const db = getFirestore();
-                if (!db) return false;
-                
-                // Atualizar todos os projetos para zero
-                const batch = db.batch();
-                
-                for (const project of projects) {
-                    const projectRef = db.collection('projects').doc(project.id);
-                    batch.update(projectRef, {
-                        votes: 0,
-                        studentVotes: 0,
-                        visitorVotes: 0
-                    });
-                    
-                    // Atualizar localmente
-                    project.votes = 0;
-                    project.studentVotes = 0;
-                    project.visitorVotes = 0;
-                }
-                
-                await batch.commit();
-                
-                // Limpar votos (opcional - comentado para manter histórico)
-                // await clearAllVotes();
-                
-                console.log('✅ Todos os votos resetados no Firebase');
+                await STATE.firestore.collection('projects').doc(projectId).update(updates);
                 return true;
-                
             } catch (error) {
-                console.error('❌ Erro ao resetar votos:', error);
+                console.error('Erro ao atualizar projeto no Firebase:', error);
                 return false;
             }
         }
 
-        async function clearAllVotes() {
+        async function deleteProjectFromFirebase(projectId) {
+            if (!STATE.dbConnected || !STATE.firestore) return false;
+            
             try {
-                const db = getFirestore();
-                if (!db) return;
-                
-                const snapshot = await db.collection('votes').get();
-                
-                if (!snapshot.empty) {
-                    const batch = db.batch();
-                    snapshot.forEach(doc => {
-                        batch.delete(doc.ref);
-                    });
-                    await batch.commit();
+                await STATE.firestore.collection('projects').doc(projectId).delete();
+                return true;
+            } catch (error) {
+                console.error('Erro ao deletar projeto no Firebase:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // FUNÇÕES DE LOCAL STORAGE
+        // ============================================
+        function loadFromLocalStorage() {
+            try {
+                const savedProjects = localStorage.getItem('senai_voting_projects');
+                if (savedProjects) {
+                    STATE.projects = JSON.parse(savedProjects);
                 }
+                
+                STATE.currentUserType = localStorage.getItem('senai_user_type');
+                STATE.hasVoted = localStorage.getItem('senai_has_voted') === 'true';
                 
             } catch (error) {
-                console.error('Erro ao limpar votos:', error);
-            }
-        }
-
-        // ============================================
-        // FUNÇÕES DE CONTROLE
-        // ============================================
-        function calculateTotalPoints(project) {
-            return (project.studentVotes * STUDENT_WEIGHT) + (project.visitorVotes * VISITOR_WEIGHT);
-        }
-
-        function loadFromLocalStorage() {
-            const savedProjects = localStorage.getItem('senai_voting_projects');
-            const savedUserType = localStorage.getItem('senai_user_type');
-            const savedHasVoted = localStorage.getItem('senai_has_voted');
-            
-            if (savedProjects) {
-                try {
-                    projects = JSON.parse(savedProjects);
-                } catch (e) {
-                    projects = [];
-                }
-            }
-            
-            if (savedUserType) {
-                currentUserType = savedUserType;
-                updateUserTypeSelection();
-            }
-            
-            if (savedHasVoted === 'true') {
-                hasVoted = true;
-            }
-            
-            // Se ainda estiver vazio, use dados padrão
-            if (projects.length === 0) {
-                projects = getDefaultProjects();
+                console.error('Erro ao carregar do localStorage:', error);
             }
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('senai_voting_projects', JSON.stringify(projects));
-            localStorage.setItem('senai_user_type', currentUserType || '');
-            localStorage.setItem('senai_has_voted', hasVoted.toString());
+            try {
+                localStorage.setItem('senai_voting_projects', JSON.stringify(STATE.projects));
+                localStorage.setItem('senai_user_type', STATE.currentUserType || '');
+                localStorage.setItem('senai_has_voted', STATE.hasVoted.toString());
+            } catch (error) {
+                console.error('Erro ao salvar no localStorage:', error);
+            }
         }
 
         function getDefaultProjects() {
@@ -1573,156 +1587,6 @@
             ];
         }
 
-        async function voteForProject(projectId) {
-            if (!currentUserType || hasVoted) {
-                showToast('Por favor, selecione seu tipo primeiro ou você já votou!', 'error');
-                return;
-            }
-            
-            if (!dbConnected) {
-                showToast('Sistema offline. Voto salvo localmente.', 'warning');
-                
-                // Salvar localmente
-                const project = projects.find(p => p.id === projectId);
-                if (project) {
-                    project.votes += 1;
-                    if (currentUserType === 'student') {
-                        project.studentVotes += 1;
-                    } else {
-                        project.visitorVotes += 1;
-                    }
-                    
-                    hasVoted = true;
-                    saveToLocalStorage();
-                    
-                    renderTools();
-                    renderTowers();
-                    renderChart();
-                    updateAdminStats();
-                    
-                    const userType = currentUserType === 'student' ? 'Aluno SENAI' : 'Visitante';
-                    showToast(`✅ Voto salvo localmente! ${project.name} recebeu seu voto como ${userType}!`, 'success');
-                }
-                return;
-            }
-            
-            // Salvar no Firebase
-            const success = await saveVoteToFirebase(projectId);
-            
-            if (success) {
-                const project = projects.find(p => p.id === projectId);
-                const userType = currentUserType === 'student' ? 'Aluno SENAI' : 'Visitante';
-                showToast(`✅ Voto registrado no Firebase! ${project.name} recebeu seu voto como ${userType}!`, 'success');
-                
-                // Atualizar interface
-                renderTools();
-                renderTowers();
-                renderChart();
-                updateAdminStats();
-            } else {
-                showToast('❌ Erro ao registrar voto. Tentando salvar localmente...', 'error');
-                
-                // Fallback local
-                const project = projects.find(p => p.id === projectId);
-                if (project) {
-                    project.votes += 1;
-                    if (currentUserType === 'student') {
-                        project.studentVotes += 1;
-                    } else {
-                        project.visitorVotes += 1;
-                    }
-                    
-                    hasVoted = true;
-                    saveToLocalStorage();
-                    
-                    renderTools();
-                    renderTowers();
-                    renderChart();
-                    updateAdminStats();
-                    
-                    showToast('✅ Voto salvo localmente (fallback)', 'success');
-                }
-            }
-        }
-
-        function updateUserTypeSelection() {
-            document.querySelectorAll('.user-type-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            if (currentUserType) {
-                const selectedCard = document.querySelector(`.user-type-card[data-type="${currentUserType}"]`);
-                if (selectedCard) {
-                    selectedCard.classList.add('selected');
-                }
-            }
-            
-            renderTools();
-        }
-
-        // ============================================
-        // FUNÇÕES DE INTERFACE
-        // ============================================
-        function showConnectionStatus(message, status) {
-            const statusElement = document.getElementById('connectionStatus');
-            if (statusElement) {
-                statusElement.style.display = 'flex';
-                statusElement.querySelector('span').textContent = message;
-                
-                const indicator = statusElement.querySelector('.status-indicator');
-                indicator.className = 'status-indicator ' + status;
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast';
-            toast.classList.add(type);
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function updateAdminStats() {
-            const totalVotes = projects.reduce((sum, p) => sum + p.votes, 0);
-            const studentVotes = projects.reduce((sum, p) => sum + p.studentVotes, 0);
-            const visitorVotes = projects.reduce((sum, p) => sum + p.visitorVotes, 0);
-            
-            document.getElementById('totalVotes').textContent = totalVotes;
-            document.getElementById('studentVotes').textContent = studentVotes;
-            document.getElementById('visitorVotes').textContent = visitorVotes;
-            document.getElementById('projectCount').textContent = projects.length;
-        }
-
-        function renderAdminProjectList() {
-            const container = document.getElementById('adminProjectList');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            projects.forEach((project, index) => {
-                const item = document.createElement('div');
-                item.className = 'project-item';
-                item.innerHTML = `
-                    <div class="project-header">
-                        <span>${project.icon}</span>
-                        <h5>${project.name}</h5>
-                    </div>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;">${project.description}</p>
-                    <div class="project-votes">
-                        <span>Total: ${project.votes} votos</span>
-                        <span>Alunos: ${project.studentVotes}</span>
-                        <span>Visitantes: ${project.visitorVotes}</span>
-                        <span>Pontos: ${calculateTotalPoints(project)}</span>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-
         // ============================================
         // FUNÇÕES DE RENDERIZAÇÃO
         // ============================================
@@ -1730,11 +1594,9 @@
             const container = document.getElementById('toolsGrid');
             if (!container) return;
             
-            container.innerHTML = '';
-            
-            if (projects.length === 0) {
+            if (STATE.projects.length === 0) {
                 container.innerHTML = `
-                    <div class="tool-card fade-in" style="grid-column: 1 / -1; text-align: center;">
+                    <div class="tool-card" style="grid-column: 1 / -1; text-align: center;">
                         <h3>Nenhuma ferramenta disponível</h3>
                         <p>Adicione ferramentas através do painel administrativo</p>
                     </div>
@@ -1742,27 +1604,45 @@
                 return;
             }
             
-            projects.forEach(project => {
-                const toolCard = document.createElement('div');
-                toolCard.className = 'tool-card fade-in';
-                toolCard.innerHTML = `
-                    <div class="tool-header">
-                        <div class="tool-icon">${project.icon}</div>
-                        <div class="tool-info">
-                            <h3>${project.name}</h3>
-                            <div style="color: var(--neon-cyan); font-family: 'Orbitron';">
-                                ${calculateTotalPoints(project)} pontos
+            // Ordenar por pontos
+            const sortedProjects = [...STATE.projects].sort((a, b) => 
+                calculateTotalPoints(b) - calculateTotalPoints(a)
+            );
+            
+            container.innerHTML = sortedProjects.map((project, index) => {
+                const points = calculateTotalPoints(project);
+                const canVote = !STATE.hasVoted && STATE.currentUserType;
+                const isTop3 = index < 3;
+                
+                return `
+                    <div class="tool-card fade-in" data-delay="${index * 100}">
+                        ${isTop3 ? `<div class="voted-indicator">TOP ${index + 1}</div>` : ''}
+                        <div class="tool-header">
+                            <div class="tool-icon">${project.icon}</div>
+                            <div class="tool-info">
+                                <h3>${project.name}</h3>
+                                <div style="color: var(${isTop3 ? '--tech-yellow' : '--neon-cyan'}); font-family: 'Orbitron';">
+                                    ${points} pontos ${isTop3 ? '🏆' : ''}
+                                </div>
                             </div>
                         </div>
+                        <p class="tool-description">${project.description}</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; font-size: 0.9rem;">
+                            <span style="color: var(--electric-blue);">👨‍🎓 ${project.studentVotes}</span>
+                            <span style="color: var(--tech-orange);">👨‍💻 ${project.visitorVotes}</span>
+                            <span style="color: var(--tech-green); margin-left: auto;">📊 ${project.votes} votos</span>
+                        </div>
+                        <button class="vote-btn" 
+                                data-project="${project.id}" 
+                                ${!canVote ? 'disabled' : ''}
+                                title="${!STATE.currentUserType ? 'Selecione seu tipo' : STATE.hasVoted ? 'Você já votou' : 'Votar neste projeto'}">
+                            ${!STATE.currentUserType ? '👤 Selecione seu tipo' : STATE.hasVoted ? '✅ Você já votou!' : '🗳️ VOTAR AGORA'}
+                        </button>
                     </div>
-                    <p class="tool-description">${project.description}</p>
-                    <button class="vote-btn" data-project="${project.id}" ${!currentUserType || hasVoted || !dbConnected ? 'disabled' : ''}>
-                        ${!dbConnected ? 'Banco offline' : !currentUserType ? 'Selecione seu tipo acima' : hasVoted ? 'Você já votou!' : 'VOTAR NESTA FERRAMENTA'}
-                    </button>
                 `;
-                container.appendChild(toolCard);
-            });
+            }).join('');
             
+            // Re-attach event listeners
             attachVoteListeners();
         }
 
@@ -1770,70 +1650,69 @@
             const container = document.getElementById('towerContainer');
             if (!container) return;
             
-            container.innerHTML = '';
-            
-            if (projects.length === 0) {
+            if (STATE.projects.length === 0) {
                 container.innerHTML = `
                     <div class="tower-card" style="grid-column: 1 / -1; text-align: center;">
-                        <h3>Nenhum dado disponível</h3>
-                        <p>Aguarde os dados serem carregados</p>
+                        <h3>Nenhum projeto disponível</h3>
+                        <p>Aguarde os projetos serem carregados</p>
                     </div>
                 `;
                 return;
             }
             
-            // Ordenar projetos por pontos
-            const sortedProjects = [...projects].sort((a, b) => calculateTotalPoints(b) - calculateTotalPoints(a));
+            const sortedProjects = [...STATE.projects].sort((a, b) => 
+                calculateTotalPoints(b) - calculateTotalPoints(a)
+            ).slice(0, 5);
+            
             const maxPoints = Math.max(...sortedProjects.map(p => calculateTotalPoints(p)));
             
-            sortedProjects.forEach((project, index) => {
+            container.innerHTML = sortedProjects.map((project, index) => {
                 const points = calculateTotalPoints(project);
                 const percentage = maxPoints > 0 ? (points / maxPoints) * 100 : 0;
                 
-                const towerCard = document.createElement('div');
-                towerCard.className = 'tower-card';
-                towerCard.innerHTML = `
-                    <div class="tower-rank rank-${index + 1}">#${index + 1}</div>
-                    <div class="tower-header">
-                        <div class="tower-icon">${project.icon}</div>
-                        <div class="tower-info">
-                            <h3>${project.name}</h3>
-                            <div style="color: var(--tech-green); font-family: 'Orbitron';">
-                                ${points} pontos
+                return `
+                    <div class="tower-card fade-in" data-delay="${index * 150}">
+                        <div class="tower-rank rank-${index + 1}">#${index + 1}</div>
+                        <div class="tower-header">
+                            <div class="tower-icon">${project.icon}</div>
+                            <div class="tower-info">
+                                <h3>${project.name}</h3>
+                                <div style="color: var(--tech-green); font-family: 'Orbitron';">
+                                    ${points} pontos
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tower-visualization">
+                            <div class="tower-bar" style="height: ${percentage}%;"></div>
+                        </div>
+                        <div class="tower-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${project.votes}</div>
+                                <div class="stat-label">VOTOS</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${project.studentVotes}</div>
+                                <div class="stat-label">ALUNOS</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${project.visitorVotes}</div>
+                                <div class="stat-label">VISITANTES</div>
                             </div>
                         </div>
                     </div>
-                    <div class="tower-visualization">
-                        <div class="tower-bar" style="height: ${percentage}%;"></div>
-                    </div>
-                    <div class="tower-stats">
-                        <div class="stat-item">
-                            <div class="stat-value">${project.votes}</div>
-                            <div class="stat-label">VOTOS</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${project.studentVotes}</div>
-                            <div class="stat-label">ALUNOS</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${project.visitorVotes}</div>
-                            <div class="stat-label">VISITANTES</div>
-                        </div>
-                    </div>
                 `;
-                container.appendChild(towerCard);
-            });
+            }).join('');
         }
 
         function renderChart() {
             const ctx = document.getElementById('votesChart')?.getContext('2d');
             if (!ctx) return;
             
-            if (chartInstance) {
-                chartInstance.destroy();
+            if (STATE.chartInstance) {
+                STATE.chartInstance.destroy();
             }
             
-            if (projects.length === 0) {
+            if (STATE.projects.length === 0) {
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.font = '20px Rajdhani';
                 ctx.textAlign = 'center';
@@ -1841,13 +1720,13 @@
                 return;
             }
             
-            const sortedProjects = [...projects].sort((a, b) => calculateTotalPoints(b) - calculateTotalPoints(a));
+            const sortedProjects = [...STATE.projects].sort((a, b) => calculateTotalPoints(b) - calculateTotalPoints(a));
             const labels = sortedProjects.map(p => p.name);
             
-            const studentData = sortedProjects.map(p => p.studentVotes * STUDENT_WEIGHT);
-            const visitorData = sortedProjects.map(p => p.visitorVotes * VISITOR_WEIGHT);
+            const studentData = sortedProjects.map(p => p.studentVotes * CONFIG.STUDENT_WEIGHT);
+            const visitorData = sortedProjects.map(p => p.visitorVotes * CONFIG.VISITOR_WEIGHT);
             
-            chartInstance = new Chart(ctx, {
+            STATE.chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -1924,6 +1803,170 @@
             });
         }
 
+        function updateAdminStats() {
+            const totalVotes = STATE.projects.reduce((sum, p) => sum + (p.votes || 0), 0);
+            const studentVotes = STATE.projects.reduce((sum, p) => sum + (p.studentVotes || 0), 0);
+            const visitorVotes = STATE.projects.reduce((sum, p) => sum + (p.visitorVotes || 0), 0);
+            
+            const totalVotesEl = document.getElementById('totalVotes');
+            const studentVotesEl = document.getElementById('studentVotes');
+            const visitorVotesEl = document.getElementById('visitorVotes');
+            const projectCountEl = document.getElementById('projectCount');
+            
+            if (totalVotesEl) totalVotesEl.textContent = totalVotes;
+            if (studentVotesEl) studentVotesEl.textContent = studentVotes;
+            if (visitorVotesEl) visitorVotesEl.textContent = visitorVotes;
+            if (projectCountEl) projectCountEl.textContent = STATE.projects.length;
+        }
+
+        function renderAdminProjectList() {
+            const container = document.getElementById('adminProjectList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            STATE.projects.forEach((project) => {
+                const points = calculateTotalPoints(project);
+                const item = document.createElement('div');
+                item.className = 'project-item';
+                item.setAttribute('data-project-id', project.id);
+                
+                item.innerHTML = `
+                    <div class="project-header">
+                        <span>${project.icon}</span>
+                        <h5>${project.name}</h5>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="action-btn edit-btn" data-project-id="${project.id}">✏️</button>
+                            <button class="action-btn delete-btn" data-project-id="${project.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;">
+                        ${project.description}
+                    </p>
+                    <div class="project-votes">
+                        <span>📊 Total: ${project.votes || 0}</span>
+                        <span>👨‍🎓 Alunos: ${project.studentVotes || 0}</span>
+                        <span>👨‍💻 Visitantes: ${project.visitorVotes || 0}</span>
+                        <span>⭐ Pontos: ${points}</span>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+            
+            // Adicionar event listeners para os botões
+            container.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const projectId = e.target.closest('button').getAttribute('data-project-id');
+                    openEditModal(projectId);
+                });
+            });
+            
+            container.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const projectId = e.target.closest('button').getAttribute('data-project-id');
+                    deleteProject(projectId);
+                });
+            });
+        }
+
+        // ============================================
+        // FUNÇÕES DE EDIÇÃO DE PROJETOS
+        // ============================================
+        function openEditModal(projectId) {
+            const project = STATE.projects.find(p => p.id === projectId);
+            if (!project) {
+                showToast('Projeto não encontrado!', 'error');
+                return;
+            }
+            
+            document.getElementById('editProjectId').value = projectId;
+            document.getElementById('editProjectName').value = project.name;
+            document.getElementById('editProjectIcon').value = project.icon;
+            document.getElementById('editProjectDescription').value = project.description;
+            
+            document.getElementById('editProjectModal').style.display = 'flex';
+        }
+
+        async function saveProjectEdit() {
+            const projectId = document.getElementById('editProjectId').value;
+            const name = document.getElementById('editProjectName').value.trim();
+            const icon = document.getElementById('editProjectIcon').value.trim();
+            const description = document.getElementById('editProjectDescription').value.trim();
+            
+            if (!name) {
+                showToast('O nome do projeto é obrigatório!', 'error');
+                return;
+            }
+            
+            const project = STATE.projects.find(p => p.id === projectId);
+            if (!project) {
+                showToast('Projeto não encontrado!', 'error');
+                return;
+            }
+            
+            // Atualizar localmente
+            project.name = name;
+            project.icon = icon || '⭐';
+            project.description = description || 'Sem descrição';
+            
+            saveToLocalStorage();
+            
+            // Atualizar no Firebase se conectado
+            if (STATE.dbConnected) {
+                const success = await updateProjectInFirebase(projectId, {
+                    name: project.name,
+                    icon: project.icon,
+                    description: project.description
+                });
+                
+                if (!success) {
+                    showToast('⚠️ Alterações salvas apenas localmente', 'warning');
+                }
+            }
+            
+            // Fechar modal
+            document.getElementById('editProjectModal').style.display = 'none';
+            
+            // Atualizar interface
+            renderTools();
+            renderTowers();
+            renderChart();
+            renderAdminProjectList();
+            updateAdminStats();
+            
+            showToast('Projeto atualizado com sucesso!', 'success');
+        }
+
+        async function deleteProject(projectId) {
+            const project = STATE.projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            if (!confirm(`Tem certeza que deseja excluir o projeto "${project.name}"?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            // Remover localmente
+            STATE.projects = STATE.projects.filter(p => p.id !== projectId);
+            saveToLocalStorage();
+            
+            // Remover do Firebase se conectado
+            if (STATE.dbConnected) {
+                await deleteProjectFromFirebase(projectId);
+            }
+            
+            // Atualizar interface
+            renderTools();
+            renderTowers();
+            renderChart();
+            renderAdminProjectList();
+            updateAdminStats();
+            
+            showToast('Projeto excluído com sucesso!', 'success');
+        }
+
         // ============================================
         // EVENT LISTENERS
         // ============================================
@@ -1931,68 +1974,112 @@
             // Seleção de tipo de usuário
             document.querySelectorAll('.user-type-card').forEach(card => {
                 card.addEventListener('click', () => {
-                    if (hasVoted) {
+                    if (STATE.hasVoted) {
                         showToast('Você já votou! Não pode alterar seu tipo.', 'error');
                         return;
                     }
                     
-                    currentUserType = card.dataset.type;
-                    updateUserTypeSelection();
-                    saveToLocalStorage();
-                    showToast(`Tipo definido como: ${card.dataset.type === 'student' ? 'Aluno SENAI' : 'Visitante'}`, 'success');
+                    STATE.currentUserType = card.dataset.type;
+                    localStorage.setItem('senai_user_type', STATE.currentUserType);
+                    
+                    // Atualizar seleção visual
+                    document.querySelectorAll('.user-type-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    card.classList.add('selected');
+                    
+                    showToast(`Tipo definido como: ${STATE.currentUserType === 'student' ? 'Aluno SENAI' : 'Visitante'}`, 'success');
+                    renderTools();
                 });
             });
             
             // Admin Access
-            document.getElementById('adminAccess').addEventListener('click', () => {
-                document.getElementById('adminPanel').classList.add('open');
-            });
+            const adminAccess = document.getElementById('adminAccess');
+            if (adminAccess) {
+                adminAccess.addEventListener('click', () => {
+                    document.getElementById('adminPanel').classList.add('open');
+                });
+            }
             
-            document.getElementById('closeAdmin').addEventListener('click', () => {
-                document.getElementById('adminPanel').classList.remove('open');
-            });
+            // Close Admin
+            const closeAdmin = document.getElementById('closeAdmin');
+            if (closeAdmin) {
+                closeAdmin.addEventListener('click', () => {
+                    document.getElementById('adminPanel').classList.remove('open');
+                    STATE.isAdminAuthenticated = false;
+                    document.getElementById('adminControls').style.display = 'none';
+                    document.getElementById('adminPassword').value = '';
+                });
+            }
             
             // Admin Login
-            document.getElementById('loginAdmin').addEventListener('click', () => {
-                const password = document.getElementById('adminPassword').value;
-                
-                if (password === ADMIN_PASSWORD) {
-                    isAdminAuthenticated = true;
-                    document.getElementById('adminControls').style.display = 'block';
-                    document.getElementById('adminPassword').value = '';
-                    showToast('✅ Acesso administrativo concedido!', 'success');
-                    renderAdminProjectList();
-                } else {
-                    showToast('❌ Senha incorreta!', 'error');
-                }
-            });
+            const loginAdmin = document.getElementById('loginAdmin');
+            if (loginAdmin) {
+                loginAdmin.addEventListener('click', () => {
+                    const password = document.getElementById('adminPassword').value;
+                    
+                    if (password === CONFIG.ADMIN_PASSWORD) {
+                        STATE.isAdminAuthenticated = true;
+                        document.getElementById('adminControls').style.display = 'block';
+                        document.getElementById('adminPassword').value = '';
+                        showToast('✅ Acesso administrativo concedido!', 'success');
+                        renderAdminProjectList();
+                    } else {
+                        showToast('❌ Senha incorreta!', 'error');
+                    }
+                });
+            }
             
             // Enter key for admin login
-            document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    document.getElementById('loginAdmin').click();
-                }
-            });
+            const adminPassword = document.getElementById('adminPassword');
+            if (adminPassword) {
+                adminPassword.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        document.getElementById('loginAdmin').click();
+                    }
+                });
+            }
             
-            // Admin Buttons
-            document.getElementById('addProject').addEventListener('click', async () => {
-                if (!isAdminAuthenticated) {
-                    showToast('Acesso administrativo necessário!', 'error');
-                    return;
-                }
-                
-                const name = document.getElementById('newProjectName').value;
-                const icon = document.getElementById('newProjectIcon').value;
-                const description = document.getElementById('newProjectDescription').value;
-                
-                if (!name.trim()) {
-                    showToast('Digite o nome do projeto!', 'error');
-                    return;
-                }
-                
-                const projectId = await addProjectToFirebase(name, icon, description);
-                
-                if (projectId) {
+            // Admin: Adicionar projeto
+            const addProject = document.getElementById('addProject');
+            if (addProject) {
+                addProject.addEventListener('click', async () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    const name = document.getElementById('newProjectName').value.trim();
+                    const icon = document.getElementById('newProjectIcon').value.trim() || '⭐';
+                    const description = document.getElementById('newProjectDescription').value.trim();
+                    
+                    if (!name) {
+                        showToast('Digite o nome do projeto!', 'error');
+                        return;
+                    }
+                    
+                    const newProject = {
+                        id: 'project-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                        name: name,
+                        icon: icon,
+                        description: description || 'Nova ferramenta do ecossistema SENAI.',
+                        votes: 0,
+                        studentVotes: 0,
+                        visitorVotes: 0
+                    };
+                    
+                    // Adicionar localmente
+                    STATE.projects.push(newProject);
+                    saveToLocalStorage();
+                    
+                    // Salvar no Firebase se conectado
+                    if (STATE.dbConnected) {
+                        const firebaseId = await addProjectToFirebase(newProject);
+                        if (firebaseId) {
+                            newProject.id = firebaseId;
+                        }
+                    }
+                    
                     // Limpar campos
                     document.getElementById('newProjectName').value = '';
                     document.getElementById('newProjectIcon').value = '';
@@ -2003,92 +2090,134 @@
                     renderTowers();
                     renderChart();
                     updateAdminStats();
+                    renderAdminProjectList();
                     
-                    showToast('Novo projeto adicionado com sucesso!', 'success');
-                } else {
-                    showToast('Erro ao adicionar projeto', 'error');
-                }
-            });
+                    showToast(`Projeto "${name}" adicionado com sucesso!`, 'success');
+                });
+            }
             
-            document.getElementById('resetVotes').addEventListener('click', async () => {
-                if (!isAdminAuthenticated) {
-                    showToast('Acesso administrativo necessário!', 'error');
-                    return;
-                }
-                
-                if (confirm('Tem certeza que deseja resetar todos os votos? Todos os votos serão zerados.')) {
-                    if (dbConnected) {
-                        const success = await resetAllVotesInFirebase();
-                        if (success) {
-                            // Resetar estado local
-                            localStorage.removeItem('senai_has_voted');
-                            hasVoted = false;
-                            currentUserType = null;
-                            updateUserTypeSelection();
-                            
-                            saveToLocalStorage();
-                            renderTools();
-                            renderTowers();
-                            renderChart();
-                            updateAdminStats();
-                            
-                            showToast('Todos os votos foram resetados!', 'success');
-                        } else {
-                            showToast('Erro ao resetar votos no Firebase', 'error');
-                        }
-                    } else {
-                        // Modo offline
-                        projects.forEach(project => {
-                            project.votes = 0;
-                            project.studentVotes = 0;
-                            project.visitorVotes = 0;
-                        });
-                        
-                        localStorage.removeItem('senai_has_voted');
-                        hasVoted = false;
-                        currentUserType = null;
-                        updateUserTypeSelection();
-                        
-                        saveToLocalStorage();
-                        renderTools();
-                        renderTowers();
-                        renderChart();
-                        updateAdminStats();
-                        
-                        showToast('Votos resetados localmente', 'success');
+            // Admin: Botão Editar Projetos
+            const editProjects = document.getElementById('editProjects');
+            if (editProjects) {
+                editProjects.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
                     }
-                }
-            });
+                    
+                    renderAdminProjectList();
+                    showToast('Modo de edição ativado. Clique nos ícones de edição para modificar projetos.', 'info');
+                });
+            }
             
-            document.getElementById('resetAll').addEventListener('click', () => {
-                if (!isAdminAuthenticated) {
-                    showToast('Acesso administrativo necessário!', 'error');
-                    return;
-                }
-                
-                if (confirm('⚠️ ATENÇÃO: Isso irá resetar TUDO (projetos, votos, configurações). Tem certeza?')) {
+            // Admin: Resetar votos
+            const resetVotes = document.getElementById('resetVotes');
+            if (resetVotes) {
+                resetVotes.addEventListener('click', async () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (!confirm('Tem certeza que deseja resetar todos os votos? Todos os votos serão zerados.')) {
+                        return;
+                    }
+                    
+                    // Resetar localmente
+                    STATE.projects.forEach(project => {
+                        project.votes = 0;
+                        project.studentVotes = 0;
+                        project.visitorVotes = 0;
+                    });
+                    
+                    STATE.hasVoted = false;
+                    STATE.currentUserType = null;
+                    
+                    localStorage.removeItem('senai_has_voted');
+                    localStorage.removeItem('senai_user_type');
+                    
+                    saveToLocalStorage();
+                    
+                    // Resetar no Firebase se conectado
+                    if (STATE.dbConnected && STATE.firestore) {
+                        try {
+                            for (const project of STATE.projects) {
+                                await STATE.firestore.collection('projects').doc(project.id).update({
+                                    votes: 0,
+                                    studentVotes: 0,
+                                    visitorVotes: 0
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Erro ao resetar no Firebase:', error);
+                        }
+                    }
+                    
+                    // Atualizar interface
+                    renderTools();
+                    renderTowers();
+                    renderChart();
+                    updateAdminStats();
+                    renderAdminProjectList();
+                    
+                    showToast('Todos os votos foram resetados!', 'success');
+                });
+            }
+            
+            // Admin: Resetar tudo
+            const resetAll = document.getElementById('resetAll');
+            if (resetAll) {
+                resetAll.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (!confirm('⚠️ ATENÇÃO: Isso irá resetar TUDO (projetos, votos, configurações). Tem certeza?')) {
+                        return;
+                    }
+                    
                     localStorage.clear();
                     showToast('Dados locais limpos. Recarregando...', 'info');
                     setTimeout(() => location.reload(), 1000);
-                }
-            });
+                });
+            }
             
-            // Close admin panel when clicking outside
-            document.addEventListener('click', (e) => {
-                const adminPanel = document.getElementById('adminPanel');
-                const adminAccess = document.getElementById('adminAccess');
-                
-                if (adminPanel && adminAccess && !adminPanel.contains(e.target) && !adminAccess.contains(e.target)) {
-                    adminPanel.classList.remove('open');
+            // Modal de edição: Salvar
+            const saveEdit = document.getElementById('saveEdit');
+            if (saveEdit) {
+                saveEdit.addEventListener('click', saveProjectEdit);
+            }
+            
+            // Modal de edição: Cancelar
+            const cancelEdit = document.getElementById('cancelEdit');
+            if (cancelEdit) {
+                cancelEdit.addEventListener('click', () => {
+                    document.getElementById('editProjectModal').style.display = 'none';
+                });
+            }
+            
+            // Fechar modais ao clicar fora
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
                 }
             });
         }
 
         function attachVoteListeners() {
-            document.querySelectorAll('.vote-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
+            document.querySelectorAll('.vote-btn:not([disabled])').forEach(button => {
+                button.addEventListener('click', async (e) => {
                     const projectId = e.target.dataset.project;
-                    voteForProject(projectId);
+                    if (projectId) {
+                        const success = await saveVote(projectId);
+                        if (success) {
+                            renderTools();
+                            renderTowers();
+                            renderChart();
+                            updateAdminStats();
+                        }
+                    }
                 });
             });
         }
@@ -2096,66 +2225,79 @@
         // ============================================
         // INICIALIZAÇÃO
         // ============================================
-        async function init() {
-            console.log('🚀 Iniciando sistema com Firebase...');
-            
-            // Primeiro carregar localmente para mostrar algo rápido
-            loadFromLocalStorage();
-            
-            // Configurar interface inicial
-            setupEventListeners();
-            renderTools();
-            renderTowers();
-            updateAdminStats();
-            
-            // Tentar conectar ao Firebase (assíncrono)
-            setTimeout(async () => {
-                try {
-                    await initializeDatabase();
-                    
-                    if (dbConnected) {
-                        // Atualizar interface com dados do Firebase
-                        renderTools();
-                        renderTowers();
-                        renderChart();
-                        updateAdminStats();
-                    }
-                } catch (error) {
-                    console.log('📴 Usando modo local devido a:', error.message);
+        async function initialize() {
+            try {
+                console.log('🚀 Iniciando Sistema de Votação SENAI...');
+                
+                // Configurar event listeners
+                setupEventListeners();
+                
+                // Carregar dados locais primeiro
+                loadFromLocalStorage();
+                
+                // Se não houver projetos, criar padrão
+                if (STATE.projects.length === 0) {
+                    STATE.projects = getDefaultProjects();
+                    saveToLocalStorage();
                 }
                 
-                // Mensagem de boas-vindas
-                setTimeout(() => {
-                    if (!currentUserType && !hasVoted) {
-                        showToast('👋 Bem-vindo! Selecione seu tipo (Aluno ou Visitante) para começar a votar.', 'success');
+                // Atualizar interface com dados locais
+                updateAdminStats();
+                renderTools();
+                renderTowers();
+                renderChart();
+                
+                // Atualizar seleção de usuário
+                if (STATE.currentUserType) {
+                    document.querySelectorAll('.user-type-card').forEach(card => {
+                        if (card.dataset.type === STATE.currentUserType) {
+                            card.classList.add('selected');
+                        }
+                    });
+                }
+                
+                // Tentar conectar ao Firebase em segundo plano
+                setTimeout(async () => {
+                    try {
+                        const connected = await initializeFirebase();
+                        if (connected) {
+                            await loadProjects();
+                            
+                            // Atualizar interface com dados do Firebase
+                            renderTools();
+                            renderTowers();
+                            renderChart();
+                            updateAdminStats();
+                            
+                            showToast('✅ Sistema sincronizado com Firebase', 'success');
+                        }
+                    } catch (error) {
+                        console.log('Firebase não disponível, continuando modo offline:', error.message);
                     }
-                }, 500);
-            }, 100);
-            
-            setupAnimations();
-        }
-
-        function setupAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('appear');
-                        }, entry.target.dataset.delay || 100);
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-            
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+                }, 1000);
+                
+                showToast('Sistema carregado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+                showToast('Erro ao inicializar o sistema', 'error');
+                
+                // Fallback: garantir que temos projetos
+                if (STATE.projects.length === 0) {
+                    STATE.projects = getDefaultProjects();
+                    saveToLocalStorage();
+                    renderTools();
+                    renderTowers();
+                    renderChart();
+                    updateAdminStats();
+                }
+            }
         }
 
         // ============================================
-        // INICIAR SISTEMA
+        // INICIAR QUANDO O DOM ESTIVER PRONTO
         // ============================================
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', initialize);
     </script>
 </body>
 </html>
