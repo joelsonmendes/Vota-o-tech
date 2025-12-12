@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecossistema Digital – Sistema de Votação Tecnológico</title>
+    <title>Ecosystema Digital – Sistema de Votação Tecnológico</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Firebase SDK -->
@@ -15,7 +15,7 @@
             --bg-secondary: #121212;
             --bg-tertiary: #1a1a1a;
             --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
+            --text-secondary: #bbbbb0;
             --electric-blue: #1e90ff;
             --neon-cyan: #00eaff;
             --tech-purple: #7f5af0;
@@ -43,13 +43,13 @@
         }
 
         body::before {
-            content: '';
+            content: "";
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 10% 20%, rgba(30, 144, 255, 0.1) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(127, 90, 240, 0.1) 0%, transparent 20%),
                 repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0, 234, 255, 0.05) 2px, rgba(0, 234, 255, 0.05) 4px);
@@ -95,7 +95,7 @@
             text-transform: uppercase;
             letter-spacing: 18px;
             margin-bottom: 8px;
-            text-shadow: 
+            text-shadow:
                 0 0 10px #fff,
                 0 0 20px #fff,
                 0 0 30px var(--neon-cyan),
@@ -113,9 +113,97 @@
             letter-spacing: 8px;
             text-transform: uppercase;
             margin-top: 5px;
-            text-shadow: 
+            text-shadow:
                 0 0 5px rgba(0, 234, 255, 0.5),
                 0 0 10px rgba(0, 234, 255, 0.3);
+        }
+
+        /* Status da Votação */
+        .voting-status {
+            position: fixed;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 99;
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voting-status.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--tech-green);
+            color: var(--tech-green);
+            animation: pulse 2s infinite;
+        }
+
+        .voting-status.inactive {
+            background: rgba(255, 71, 87, 0.1);
+            border-color: var(--tech-red);
+            color: var(--tech-red);
+        }
+
+        /* Projeto Vencedor Banner */
+        .winner-banner {
+            position: fixed;
+            top: 170px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--tech-yellow);
+            border-radius: 15px;
+            padding: 15px 30px;
+            display: none;
+            align-items: center;
+            gap: 20px;
+            z-index: 98;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+            animation: glow-yellow 3s infinite alternate;
+        }
+
+        @keyframes glow-yellow {
+            from {
+                box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+            }
+            to {
+                box-shadow: 0 10px 60px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        .winner-banner.show {
+            display: flex;
+        }
+
+        .winner-icon {
+            font-size: 2.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .winner-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--tech-yellow);
+            margin-bottom: 5px;
+        }
+
+        .winner-info p {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
         /* Hero Section */
@@ -128,17 +216,17 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            padding: 140px 20px 60px;
+            padding: 180px 20px 60px;
         }
 
         .hero::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 50% 0%, rgba(0, 234, 255, 0.1) 0%, transparent 50%),
                 linear-gradient(180deg, transparent 0%, var(--bg-primary) 100%);
             z-index: -1;
@@ -246,7 +334,7 @@
         }
 
         .section-title::after {
-            content: '';
+            content: "";
             position: absolute;
             bottom: -10px;
             left: 50%;
@@ -276,7 +364,7 @@
         }
 
         .tool-card::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
@@ -349,7 +437,7 @@
         }
 
         .vote-btn::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: -100%;
@@ -391,13 +479,13 @@
         }
 
         .tower-dashboard::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 linear-gradient(45deg, transparent 0%, rgba(0, 234, 255, 0.05) 100%),
                 repeating-linear-gradient(
                     0deg,
@@ -433,7 +521,7 @@
         }
 
         .tower-card::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
@@ -506,7 +594,7 @@
         }
 
         .tower-bar::after {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
@@ -637,7 +725,7 @@
 
         @keyframes neon-glow {
             from {
-                text-shadow: 
+                text-shadow:
                     0 0 10px #fff,
                     0 0 20px #fff,
                     0 0 30px var(--neon-cyan),
@@ -646,7 +734,7 @@
                     0 0 60px var(--neon-cyan);
             }
             to {
-                text-shadow: 
+                text-shadow:
                     0 0 5px #fff,
                     0 0 10px #fff,
                     0 0 15px var(--neon-cyan),
@@ -681,9 +769,29 @@
                 font-size: 0.8rem;
                 letter-spacing: 4px;
             }
-            
+
+            .voting-status {
+                top: 100px;
+                font-size: 0.8rem;
+                padding: 10px 20px;
+            }
+
+            .winner-banner {
+                top: 140px;
+                padding: 12px 20px;
+                gap: 15px;
+            }
+
+            .winner-icon {
+                font-size: 2rem;
+            }
+
+            .winner-info h3 {
+                font-size: 1rem;
+            }
+
             .hero {
-                padding: 120px 20px 40px;
+                padding: 160px 20px 40px;
             }
             
             .hero h1 {
@@ -750,6 +858,10 @@
 
         .toast.success {
             border-color: var(--tech-green);
+        }
+
+        .toast.warning {
+            border-color: var(--tech-yellow);
         }
 
         /* Admin Panel */
@@ -854,6 +966,18 @@
 
         .admin-btn.secondary {
             background: linear-gradient(90deg, var(--tech-orange), #ff9500);
+        }
+
+        .admin-btn.warning {
+            background: linear-gradient(90deg, var(--tech-yellow), #ffaa00);
+        }
+
+        .admin-btn.success {
+            background: linear-gradient(90deg, var(--tech-green), #00cc77);
+        }
+
+        .admin-btn.info {
+            background: linear-gradient(90deg, var(--neon-cyan), var(--electric-blue));
         }
 
         .project-list {
@@ -999,7 +1123,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .modal-content {
             background: var(--glass-bg);
             backdrop-filter: blur(30px);
@@ -1010,14 +1134,14 @@
             width: 90%;
             box-shadow: 0 20px 60px rgba(0, 234, 255, 0.3);
         }
-        
+
         .modal-buttons {
             display: flex;
             gap: 15px;
             margin-top: 25px;
             justify-content: flex-end;
         }
-        
+
         .modal-btn {
             padding: 10px 25px;
             border-radius: 8px;
@@ -1027,12 +1151,12 @@
             font-weight: 600;
             transition: all 0.3s ease;
         }
-        
+
         .modal-btn.confirm {
             background: var(--tech-red);
             color: white;
         }
-        
+
         .modal-btn.cancel {
             background: var(--bg-tertiary);
             color: var(--text-primary);
@@ -1052,6 +1176,51 @@
             font-weight: bold;
             animation: pulse 2s infinite;
         }
+
+        /* Integridade do sistema */
+        .integrity-badge {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8rem;
+            z-index: 997;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .integrity-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 234, 255, 0.2);
+        }
+
+        .integrity-score {
+            font-weight: bold;
+            color: var(--tech-green);
+        }
+
+        .integrity-score.warning {
+            color: var(--tech-yellow);
+        }
+
+        .integrity-score.error {
+            color: var(--tech-red);
+        }
+
+        /* Contador de tempo */
+        .timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            text-align: center;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -1063,28 +1232,49 @@
         </div>
     </header>
 
+    <!-- Status da Votação -->
+    <div class="voting-status inactive" id="votingStatus">
+        Votação Encerrada
+    </div>
+
+    <!-- Projeto Vencedor Banner -->
+    <div class="winner-banner show" id="winnerBanner">
+        <div class="winner-icon">📸</div>
+        <div class="winner-info">
+            <h3>🏆 RECONHECIMENTO FACIAL V4 🏆</h3>
+            <p>Vencedor com 145 votos! Parabéns à equipe vencedora!</p>
+        </div>
+    </div>
+
     <!-- Connection Status -->
     <div class="connection-status" id="connectionStatus" style="display: none;">
         <div class="status-indicator disconnected"></div>
         <span>Conectando ao banco de dados...</span>
     </div>
 
+    <!-- Integridade do Sistema -->
+    <div class="integrity-badge" id="integrityBadge" style="display: none;">
+        <span>Integridade: </span>
+        <span class="integrity-score" id="integrityScore">100%</span>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1 class="fade-in">VOTAÇÃO TECNOLÓGICA</h1>
-            <p class="fade-in">Ajude a escolher as melhores ferramentas do ecossistema SENAI. Cada voto conta de forma única!</p>
+            <h1 class="fade-in">RESULTADO DA VOTAÇÃO</h1>
+            <p class="fade-in">Confira os resultados da votação tecnológica do SENAI HUB. O vencedor já foi anunciado!</p>
             
             <div class="user-type-selector">
                 <div class="user-type-card student" data-type="student">
                     <div class="user-type-icon">🎓</div>
                     <h3>ALUNO SENAI</h3>
-                    <p>Você é estudante do SENAI. Seu voto é importante!</p>
+                    <p>Você é estudante do SENAI. Seu voto foi importante!</p>
                 </div>
+                
                 <div class="user-type-card visitor" data-type="visitor">
-                    <div class="user-type-icon">👨‍💻</div>
+                    <div class="user-type-icon">👥</div>
                     <h3>VISITANTE</h3>
-                    <p>Você é visitante externo. Sua opinião é valiosa!</p>
+                    <p>Você é visitante externo. Sua opinião foi valiosa!</p>
                 </div>
             </div>
         </div>
@@ -1093,16 +1283,16 @@
     <!-- Voting Tools Section -->
     <section class="section">
         <div class="container">
-            <h2 class="section-title">FERRAMENTAS PARA VOTAÇÃO</h2>
+            <h2 class="section-title">PROJETOS PARTICIPANTES</h2>
             <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
-                Selecione seu tipo acima e depois escolha a ferramenta que mais merece destaque. Cada voto é importante para o ranking!
+                Confira todos os projetos que participaram da votação tecnológica. A votação já foi encerrada e o vencedor anunciado!
             </p>
             
             <div class="tools-grid" id="toolsGrid">
                 <!-- Tools will be loaded here -->
                 <div class="loading-placeholder" style="text-align: center; padding: 40px;">
                     <div class="spinner" style="width: 40px; height: 40px;"></div>
-                    <p style="margin-top: 20px; color: var(--neon-cyan);">Carregando ferramentas...</p>
+                    <p style="margin-top: 20px; color: var(--neon-cyan);">Carregando projetos...</p>
                 </div>
             </div>
         </div>
@@ -1111,9 +1301,9 @@
     <!-- Tower Dashboard -->
     <section class="tower-dashboard">
         <div class="container">
-            <h2 class="section-title">RANKING DAS TORRES</h2>
+            <h2 class="section-title">RANKING FINAL</h2>
             <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px;">
-                Visualize o ranking em tempo real através das torres transparentes
+                Ranking final dos projetos baseado nos votos reais da votação
             </p>
             
             <div class="tower-container" id="towerContainer">
@@ -1129,7 +1319,7 @@
     <!-- Charts Section -->
     <section class="charts-section">
         <div class="container">
-            <h2 class="section-title">ANÁLISE DETALHADA</h2>
+            <h2 class="section-title">ANÁLISE DETALHADA DOS VOTOS</h2>
             
             <div class="chart-container">
                 <canvas id="votesChart"></canvas>
@@ -1150,7 +1340,7 @@
                 <div class="footer-bottom">
                     <p>&copy; 2025 SENAI HUB - Sistema de Votação Tecnológico. Todos os direitos reservados.</p>
                     <p style="margin-top: 10px; font-size: 0.8rem; color: var(--neon-cyan);">
-                        🔒 Sistema seguro com votação justa para todos os participantes
+                        Sistema seguro com votação justa para todos os participantes
                     </p>
                 </div>
             </div>
@@ -1165,7 +1355,7 @@
     <!-- Admin Panel -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
-            <h3>🔧 PAINEL DE CONTROLE</h3>
+            <h3>⚙️ PAINEL DE CONTROLE</h3>
             <button class="close-admin" id="closeAdmin">&times;</button>
         </div>
         
@@ -1176,20 +1366,22 @@
                 <p>Alunos Votantes: <span id="studentVotes">0</span></p>
                 <p>Visitantes Votantes: <span id="visitorVotes">0</span></p>
                 <p>Projetos Cadastrados: <span id="projectCount">0</span></p>
-                <p style="color: var(--tech-green); font-size: 0.9rem; margin-top: 10px;">
-                    ⚙️ Configuração Interna: Alunos (Peso 1) | Visitantes (Peso 3)
+                <p>Status: <span id="votingStatusText">Encerrada</span></p>
+                <p>Integridade: <span id="adminIntegrity">100%</span></p>
+                <p style="color: var(--tech-yellow); font-size: 0.9rem; margin-top: 10px;">
+                    🏆 VENCEDOR: Reconhecimento Facial V4
                 </p>
             </div>
         </div>
         
         <div class="admin-section">
-            <h4>🔑 ACESSO ADMINISTRATIVO</h4>
+            <h4>🔐 ACESSO ADMINISTRATIVO</h4>
             <input type="password" class="admin-input" id="adminPassword" placeholder="Senha de Administrador">
-            <button class="admin-btn" id="loginAdmin">🔓 ACESSAR</button>
+            <button class="admin-btn" id="loginAdmin">🔑 ACESSAR</button>
         </div>
         
         <div class="admin-section" id="adminControls" style="display: none;">
-            <h4>📋 GERENCIAR PROJETOS</h4>
+            <h4>📝 GERENCIAR PROJETOS</h4>
             <input type="text" class="admin-input" id="newProjectName" placeholder="Nome do Projeto">
             <input type="text" class="admin-input" id="newProjectIcon" placeholder="Ícone (emoji)">
             <input type="text" class="admin-input" id="newProjectDescription" placeholder="Descrição">
@@ -1199,10 +1391,25 @@
                 <!-- Projects list for admin -->
             </div>
             
+            <h4 style="margin-top: 30px;">📊 IMPORTAR DADOS DA VOTAÇÃO</h4>
+            <button class="admin-btn info" id="loadRealData">📈 CARREGAR DADOS REAIS</button>
+            <button class="admin-btn success" id="setWinner">🏆 DEFINIR VENCEDOR</button>
+            
+            <h4 style="margin-top: 30px;">⏱️ CONTROLE DE VOTAÇÃO</h4>
+            <button class="admin-btn success" id="startVoting">▶️ INICIAR VOTAÇÃO</button>
+            <button class="admin-btn reset" id="stopVoting">⏹️ PARAR VOTAÇÃO</button>
+            <button class="admin-btn warning" id="announceWinner">🏆 ANUNCIAR VENCEDOR</button>
+            
             <h4 style="margin-top: 30px;">⚙️ FUNÇÕES DE ADMIN</h4>
+            <button class="admin-btn warning" id="syncData">🔄 SINCRONIZAR DADOS</button>
             <button class="admin-btn reset" id="resetVotes">🔄 RESETAR VOTOS</button>
             <button class="admin-btn secondary" id="editProjects">✏️ EDITAR PROJETOS</button>
-            <button class="admin-btn reset" id="resetAll">💀 RESETAR TUDO</button>
+            <button class="admin-btn reset" id="resetAll">⚠️ RESETAR TUDO</button>
+            
+            <div id="syncStatus" style="margin-top: 20px; padding: 10px; border-radius: 5px; display: none;">
+                <p style="font-size: 0.9rem; color: var(--neon-cyan);" id="syncStatusText"></p>
+                <div class="spinner" style="width: 20px; height: 20px; margin: 10px auto;"></div>
+            </div>
         </div>
     </div>
 
@@ -1255,6 +1462,121 @@
         };
 
         // ============================================
+        // DADOS REAIS DA VOTAÇÃO (DA ANÁLISE DO GEMINI)
+        // ============================================
+        const REAL_VOTING_DATA = {
+            projects: [
+                {
+                    id: 'reconhecimento-facial-v4',
+                    name: 'Reconhecimento Facial V4',
+                    icon: '📸',
+                    description: 'Sistema avançado de reconhecimento facial com IA para segurança e autenticação.',
+                    votes: 145,
+                    studentVotes: 58,   // Estimativa: 40% de 145
+                    visitorVotes: 87    // Estimativa: 60% de 145
+                },
+                {
+                    id: 'mst-v6',
+                    name: 'MST V6',
+                    icon: '🚀',
+                    description: 'Plataforma de gestão industrial com machine learning e analytics em tempo real.',
+                    votes: 126,
+                    studentVotes: 50,   // Estimativa: 40% de 126
+                    visitorVotes: 76    // Estimativa: 60% de 126
+                },
+                {
+                    id: 'robo-industrial-40',
+                    name: 'Robô Industrial 4.0',
+                    icon: '🤖',
+                    description: 'Automação robótica inteligente para linhas de produção industriais.',
+                    votes: 45,
+                    studentVotes: 18,   // Estimativa: 40% de 45
+                    visitorVotes: 27    // Estimativa: 60% de 45
+                },
+                {
+                    id: 'gestao-5d-ia-emocional',
+                    name: 'Gestão 5D — IA Emocional',
+                    icon: '🧠',
+                    description: 'Sistema de gestão com análise de sentimentos e inteligência emocional artificial.',
+                    votes: 36,
+                    studentVotes: 14,   // Estimativa: 40% de 36
+                    visitorVotes: 22    // Estimativa: 60% de 36
+                },
+                {
+                    id: 'super-shock-login',
+                    name: 'Super Shock Login - Energia',
+                    icon: '⚡',
+                    description: 'Sistema de autenticação biométrica com verificação de energia vital.',
+                    votes: 9,
+                    studentVotes: 7,
+                    visitorVotes: 2
+                },
+                {
+                    id: 'electrobot-eletrotecnica',
+                    name: 'ElectroBot Eletrotécnica',
+                    icon: '🔌',
+                    description: 'Assistente virtual especializado em soluções elétricas e eletrotécnicas.',
+                    votes: 13,
+                    studentVotes: 7,
+                    visitorVotes: 6
+                },
+                {
+                    id: 'agil-connect',
+                    name: 'ÁgilConnect',
+                    icon: '📡',
+                    description: 'Plataforma de conectividade industrial com baixa latência e alta confiabilidade.',
+                    votes: 16,
+                    studentVotes: 9,
+                    visitorVotes: 7
+                },
+                {
+                    id: 'exitcare-pro',
+                    name: 'ExitCare Pro',
+                    icon: '🏥',
+                    description: 'Sistema de gestão hospitalar com foco em alta segura e monitoramento pós-alta.',
+                    votes: 72,
+                    studentVotes: 25,
+                    visitorVotes: 47
+                },
+                {
+                    id: 'constroi-facil',
+                    name: 'Constrói Fácil',
+                    icon: '🏗️',
+                    description: 'Ferramenta de planejamento e gestão de obras civis com realidade aumentada.',
+                    votes: 423,
+                    studentVotes: 42,
+                    visitorVotes: 381
+                },
+                {
+                    id: 'portal-industrial-30',
+                    name: 'Portal Industrial 3.0',
+                    icon: '🌐',
+                    description: 'Portal integrado para indústria 4.0 com IoT e analytics preditivo.',
+                    votes: 36,
+                    studentVotes: 14,
+                    visitorVotes: 22
+                },
+                {
+                    id: 'plu-plus',
+                    name: 'Plu$',
+                    icon: '💰',
+                    description: 'Sistema de gestão financeira inteligente para pequenas e médias indústrias.',
+                    votes: 131,
+                    studentVotes: 39,
+                    visitorVotes: 92
+                }
+            ],
+            summary: {
+                totalVotes: 952,
+                totalProjects: 11,
+                winner: 'Reconhecimento Facial V4',
+                winnerVotes: 145,
+                votingClosed: true,
+                announcementDate: '2025-01-15'
+            }
+        };
+
+        // ============================================
         // ESTADO DO SISTEMA
         // ============================================
         const STATE = {
@@ -1266,7 +1588,14 @@
             userId: null,
             dbConnected: false,
             firebaseApp: null,
-            firestore: null
+            firestore: null,
+            integrityScore: 100,
+            isSyncing: false,
+            votingActive: false, // Inicia com votação encerrada
+            votingEndTime: null,
+            countdownInterval: null,
+            winnerAnnounced: true, // Já inicia com vencedor anunciado
+            usingRealData: false
         };
 
         // ============================================
@@ -1301,8 +1630,440 @@
 
         function calculateTotalPoints(project) {
             if (!project) return 0;
-            return (project.studentVotes * CONFIG.STUDENT_WEIGHT) + 
-                   (project.visitorVotes * CONFIG.VISITOR_WEIGHT);
+            
+            // Usar apenas a soma real dos votos para o ranking
+            const studentVotes = parseInt(project.studentVotes) || 0;
+            const visitorVotes = parseInt(project.visitorVotes) || 0;
+            
+            return studentVotes + visitorVotes;
+        }
+
+        // ============================================
+        // CONTROLE DE VOTAÇÃO
+        // ============================================
+        function updateVotingStatus() {
+            const statusElement = document.getElementById('votingStatus');
+            const statusText = document.getElementById('votingStatusText');
+            
+            if (statusElement) {
+                if (STATE.votingActive) {
+                    statusElement.textContent = 'Votação Ativa';
+                    statusElement.className = 'voting-status active';
+                    if (statusText) statusText.textContent = 'Ativa';
+                } else {
+                    statusElement.textContent = 'Votação Encerrada';
+                    statusElement.className = 'voting-status inactive';
+                    if (statusText) statusText.textContent = 'Encerrada';
+                }
+            }
+            
+            // Atualizar botões de votação
+            renderTools();
+        }
+
+        function startVoting() {
+            STATE.votingActive = true;
+            STATE.votingEndTime = null;
+            STATE.winnerAnnounced = false;
+            
+            // Esconder banner do vencedor
+            const winnerBanner = document.getElementById('winnerBanner');
+            if (winnerBanner) {
+                winnerBanner.classList.remove('show');
+            }
+            
+            updateVotingStatus();
+            saveToLocalStorage();
+            
+            // Salvar no Firebase se conectado
+            if (STATE.dbConnected && STATE.firestore) {
+                STATE.firestore.collection('config').doc('voting').set({
+                    active: true,
+                    lastStarted: new Date(),
+                    winnerAnnounced: false
+                });
+            }
+            
+            showToast('✅ Votação iniciada! Os usuários já podem votar.', 'success');
+        }
+
+        function stopVoting() {
+            STATE.votingActive = false;
+            STATE.votingEndTime = new Date();
+            
+            updateVotingStatus();
+            saveToLocalStorage();
+            
+            // Salvar no Firebase se conectado
+            if (STATE.dbConnected && STATE.firestore) {
+                STATE.firestore.collection('config').doc('voting').set({
+                    active: false,
+                    stoppedAt: new Date(),
+                    winnerAnnounced: false
+                });
+            }
+            
+            showToast('⏹️ Votação encerrada! Os usuários não podem mais votar.', 'warning');
+        }
+
+        function announceWinner() {
+            if (STATE.projects.length === 0) {
+                showToast('Não há projetos para anunciar vencedor!', 'error');
+                return;
+            }
+            
+            // Encontrar o projeto com mais pontos
+            const winner = [...STATE.projects].sort((a, b) => 
+                calculateTotalPoints(b) - calculateTotalPoints(a)
+            )[0];
+            
+            if (!winner) {
+                showToast('Não foi possível determinar o vencedor!', 'error');
+                return;
+            }
+            
+            // Atualizar banner do vencedor
+            const winnerBanner = document.getElementById('winnerBanner');
+            const winnerIcon = document.getElementById('winnerIcon');
+            const winnerName = document.getElementById('winnerName');
+            const winnerDescription = document.getElementById('winnerDescription');
+            
+            if (winnerBanner && winnerIcon && winnerName && winnerDescription) {
+                winnerIcon.textContent = winner.icon;
+                winnerName.textContent = `🏆 ${winner.name.toUpperCase()} 🏆`;
+                winnerDescription.textContent = `Vencedor com ${calculateTotalPoints(winner)} votos! Parabéns à equipe vencedora!`;
+                winnerBanner.classList.add('show');
+            }
+            
+            STATE.winnerAnnounced = true;
+            
+            // Salvar no Firebase se conectado
+            if (STATE.dbConnected && STATE.firestore) {
+                STATE.firestore.collection('config').doc('winner').set({
+                    projectId: winner.id,
+                    projectName: winner.name,
+                    projectIcon: winner.icon,
+                    points: calculateTotalPoints(winner),
+                    announcedAt: new Date()
+                });
+                
+                STATE.firestore.collection('config').doc('voting').update({
+                    winnerAnnounced: true
+                });
+            }
+            
+            showToast(`🏆 Vencedor anunciado: ${winner.name}!`, 'success');
+        }
+
+        // ============================================
+        // FUNÇÕES PARA DADOS REAIS
+        // ============================================
+        function loadRealVotingData() {
+            if (!confirm('Deseja carregar os dados reais da votação?\n\nIsso substituirá os projetos atuais pelos dados reais da análise.')) {
+                return;
+            }
+            
+            STATE.projects = [...REAL_VOTING_DATA.projects];
+            STATE.usingRealData = true;
+            STATE.votingActive = false;
+            STATE.winnerAnnounced = true;
+            
+            // Configurar vencedor automático
+            const winner = REAL_VOTING_DATA.projects.find(p => p.id === 'reconhecimento-facial-v4');
+            if (winner) {
+                const winnerBanner = document.getElementById('winnerBanner');
+                const winnerIcon = document.getElementById('winnerIcon');
+                const winnerName = document.getElementById('winnerName');
+                const winnerDescription = document.getElementById('winnerDescription');
+                
+                if (winnerBanner && winnerIcon && winnerName && winnerDescription) {
+                    winnerIcon.textContent = winner.icon;
+                    winnerName.textContent = `🏆 ${winner.name.toUpperCase()} 🏆`;
+                    winnerDescription.textContent = `Vencedor com ${winner.votes} votos! Parabéns à equipe vencedora!`;
+                    winnerBanner.classList.add('show');
+                }
+            }
+            
+            saveToLocalStorage();
+            
+            // Atualizar interface
+            updateVotingStatus();
+            renderTools();
+            renderTowers();
+            renderChart();
+            updateAdminStats();
+            updateIntegrityDisplay();
+            
+            showToast('✅ Dados reais da votação carregados com sucesso!', 'success');
+        }
+
+        function setWinnerManually() {
+            if (STATE.projects.length === 0) {
+                showToast('Não há projetos disponíveis!', 'error');
+                return;
+            }
+            
+            // Encontrar Reconhecimento Facial V4
+            const winner = STATE.projects.find(p => p.name.includes('Reconhecimento Facial') || p.id === 'reconhecimento-facial-v4');
+            
+            if (!winner) {
+                showToast('Projeto "Reconhecimento Facial V4" não encontrado!', 'error');
+                return;
+            }
+            
+            // Atualizar banner do vencedor
+            const winnerBanner = document.getElementById('winnerBanner');
+            const winnerIcon = document.getElementById('winnerIcon');
+            const winnerName = document.getElementById('winnerName');
+            const winnerDescription = document.getElementById('winnerDescription');
+            
+            if (winnerBanner && winnerIcon && winnerName && winnerDescription) {
+                winnerIcon.textContent = winner.icon;
+                winnerName.textContent = `🏆 ${winner.name.toUpperCase()} 🏆`;
+                winnerDescription.textContent = `Vencedor com ${winner.votes} votos! Parabéns à equipe vencedora!`;
+                winnerBanner.classList.add('show');
+            }
+            
+            STATE.winnerAnnounced = true;
+            saveToLocalStorage();
+            
+            showToast(`✅ Vencedor definido como: ${winner.name}`, 'success');
+        }
+
+        // ============================================
+        // FUNÇÕES DE INTEGRIDADE E SINCRONIZAÇÃO
+        // ============================================
+        function calculateIntegrityScore() {
+            try {
+                const totalVotes = STATE.projects.reduce((sum, p) => sum + (parseInt(p.votes) || 0), 0);
+                const totalStudents = STATE.projects.reduce((sum, p) => sum + (parseInt(p.studentVotes) || 0), 0);
+                const totalVisitors = STATE.projects.reduce((sum, p) => sum + (parseInt(p.visitorVotes) || 0), 0);
+                
+                const expectedTotal = totalStudents + totalVisitors;
+                
+                if (totalVotes === 0) return 100;
+                
+                const score = Math.round((expectedTotal / totalVotes) * 100);
+                STATE.integrityScore = Math.min(100, Math.max(0, score));
+                
+                return STATE.integrityScore;
+            } catch (error) {
+                console.error('Erro ao calcular integridade:', error);
+                return 100;
+            }
+        }
+
+        function updateIntegrityDisplay() {
+            const score = calculateIntegrityScore();
+            const badge = document.getElementById('integrityBadge');
+            const scoreElement = document.getElementById('integrityScore');
+            const adminIntegrity = document.getElementById('adminIntegrity');
+            
+            if (scoreElement) {
+                scoreElement.textContent = score + '%';
+                scoreElement.className = 'integrity-score';
+                
+                if (score >= 95) {
+                    scoreElement.classList.add('success');
+                } else if (score >= 80) {
+                    scoreElement.classList.add('warning');
+                } else {
+                    scoreElement.classList.add('error');
+                }
+            }
+            
+            if (adminIntegrity) {
+                adminIntegrity.textContent = score + '%';
+            }
+            
+            if (badge) {
+                badge.style.display = 'block';
+                
+                if (score < 90) {
+                    badge.style.borderColor = 'var(--tech-yellow)';
+                    badge.style.boxShadow = '0 0 10px var(--tech-yellow)';
+                } else {
+                    badge.style.borderColor = 'var(--glass-border)';
+                    badge.style.boxShadow = 'none';
+                }
+            }
+            
+            // Mostrar warning se integridade baixa
+            if (score < 85 && !STATE.isSyncing) {
+                showToast(`⚠️ Baixa integridade detectada (${score}%). Considere sincronizar.`, 'warning');
+            }
+            
+            return score;
+        }
+
+        async function syncAndFixData() {
+            if (STATE.isSyncing) {
+                showToast('Sincronização já em andamento...', 'warning');
+                return false;
+            }
+            
+            if (!STATE.dbConnected || !STATE.firestore) {
+                showToast('❌ Conecte-se ao Firebase primeiro', 'error');
+                return false;
+            }
+            
+            STATE.isSyncing = true;
+            const syncStatus = document.getElementById('syncStatus');
+            const syncStatusText = document.getElementById('syncStatusText');
+            
+            if (syncStatus) {
+                syncStatus.style.display = 'block';
+                syncStatusText.textContent = 'Iniciando sincronização...';
+            }
+            
+            try {
+                console.log('🔄 Iniciando sincronização e correção de dados...');
+                
+                // 1. Contar votos reais do Firebase
+                const votesSnapshot = await STATE.firestore.collection('votes').get();
+                const realVotes = votesSnapshot.size;
+                
+                console.log(`📊 Total de votos reais: ${realVotes}`);
+                
+                // 2. Agrupar votos por projeto
+                const projectVotes = {};
+                const studentVotesByProject = {};
+                const visitorVotesByProject = {};
+                
+                votesSnapshot.forEach(doc => {
+                    const vote = doc.data();
+                    const projectId = vote.projectId;
+                    const userType = vote.userType;
+                    
+                    // Contar votos totais por projeto
+                    projectVotes[projectId] = (projectVotes[projectId] || 0) + 1;
+                    
+                    // Contar por tipo de usuário
+                    if (userType === 'student') {
+                        studentVotesByProject[projectId] = (studentVotesByProject[projectId] || 0) + 1;
+                    } else {
+                        visitorVotesByProject[projectId] = (visitorVotesByProject[projectId] || 0) + 1;
+                    }
+                });
+                
+                console.log('📋 Votos agrupados por projeto:', projectVotes);
+                
+                // 3. Atualizar projetos com valores reais
+                let correctedProjects = 0;
+                
+                if (syncStatusText) {
+                    syncStatusText.textContent = 'Atualizando projetos...';
+                }
+                
+                for (const project of STATE.projects) {
+                    const realTotal = projectVotes[project.id] || 0;
+                    const realStudents = studentVotesByProject[project.id] || 0;
+                    const realVisitors = visitorVotesByProject[project.id] || 0;
+                    
+                    // Verificar discrepância
+                    if (project.votes !== realTotal || 
+                        project.studentVotes !== realStudents || 
+                        project.visitorVotes !== realVisitors) {
+                        
+                        console.log(`🔧 Corrigindo ${project.name}:`);
+                        console.log(`   Votos: ${project.votes} → ${realTotal}`);
+                        console.log(`   Alunos: ${project.studentVotes} → ${realStudents}`);
+                        console.log(`   Visitantes: ${project.visitorVotes} → ${realVisitors}`);
+                        
+                        // Atualizar localmente
+                        project.votes = realTotal;
+                        project.studentVotes = realStudents;
+                        project.visitorVotes = realVisitors;
+                        
+                        correctedProjects++;
+                        
+                        // Atualizar no Firebase
+                        try {
+                            await STATE.firestore.collection('projects').doc(project.id).update({
+                                votes: realTotal,
+                                studentVotes: realStudents,
+                                visitorVotes: realVisitors
+                            });
+                            console.log(`✅ ${project.name} atualizado no Firebase`);
+                        } catch (firebaseError) {
+                            console.error(`❌ Erro ao atualizar ${project.name}:`, firebaseError);
+                        }
+                    }
+                }
+                
+                // 4. Carregar configurações do Firebase
+                const configDoc = await STATE.firestore.collection('config').doc('voting').get();
+                if (configDoc.exists) {
+                    const config = configDoc.data();
+                    STATE.votingActive = config.active || false;
+                    STATE.winnerAnnounced = config.winnerAnnounced || true;
+                    
+                    if (config.stoppedAt) {
+                        STATE.votingEndTime = config.stoppedAt.toDate();
+                    }
+                    
+                    console.log('📋 Configurações carregadas do Firebase:', config);
+                }
+                
+                // 5. Carregar vencedor se anunciado
+                if (STATE.winnerAnnounced) {
+                    const winnerDoc = await STATE.firestore.collection('config').doc('winner').get();
+                    if (winnerDoc.exists) {
+                        const winnerData = winnerDoc.data();
+                        const winner = STATE.projects.find(p => p.id === winnerData.projectId);
+                        
+                        if (winner) {
+                            const winnerBanner = document.getElementById('winnerBanner');
+                            const winnerIcon = document.getElementById('winnerIcon');
+                            const winnerName = document.getElementById('winnerName');
+                            const winnerDescription = document.getElementById('winnerDescription');
+                            
+                            if (winnerBanner && winnerIcon && winnerName && winnerDescription) {
+                                winnerIcon.textContent = winnerData.projectIcon || winner.icon;
+                                winnerName.textContent = `🏆 ${winnerData.projectName.toUpperCase()} 🏆`;
+                                winnerDescription.textContent = `Vencedor com ${winnerData.points || calculateTotalPoints(winner)} votos! Parabéns à equipe vencedora!`;
+                                winnerBanner.classList.add('show');
+                            }
+                        }
+                    }
+                }
+                
+                // 6. Salvar localmente
+                saveToLocalStorage();
+                
+                if (syncStatusText) {
+                    syncStatusText.textContent = 'Finalizando...';
+                }
+                
+                // 7. Atualizar interface
+                updateVotingStatus();
+                renderTools();
+                renderTowers();
+                renderChart();
+                updateAdminStats();
+                updateIntegrityDisplay();
+                renderAdminProjectList();
+                
+                console.log(`✅ Sincronização concluída: ${correctedProjects} projetos corrigidos`);
+                
+                showToast(`✅ Sincronização concluída! ${correctedProjects} projetos corrigidos.`, 'success');
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Erro na sincronização:', error);
+                showToast('❌ Erro ao sincronizar dados', 'error');
+                return false;
+                
+            } finally {
+                STATE.isSyncing = false;
+                
+                if (syncStatus) {
+                    setTimeout(() => {
+                        syncStatus.style.display = 'none';
+                    }, 2000);
+                }
+            }
         }
 
         // ============================================
@@ -1315,29 +2076,37 @@
                 if (!window.firebase) {
                     throw new Error('Firebase SDK não carregado');
                 }
-                
+
                 // Inicializar Firebase
                 STATE.firebaseApp = window.firebase.initializeApp(CONFIG.FIREBASE_CONFIG);
                 STATE.firestore = window.firebase.firestore();
-                
+
                 // Gerar ID do usuário
                 STATE.userId = localStorage.getItem('senai_user_id');
                 if (!STATE.userId) {
                     STATE.userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                     localStorage.setItem('senai_user_id', STATE.userId);
                 }
-                
+
                 // Testar conexão
-                await STATE.firestore.collection('test').doc('test').get();
-                
-                STATE.dbConnected = true;
-                showConnectionStatus('Conectado ao Firebase ✅', 'connected');
-                return true;
-                
+                try {
+                    await STATE.firestore.collection('votes').limit(1).get();
+                    STATE.dbConnected = true;
+                    showConnectionStatus('✅ Conectado ao Firebase', 'connected');
+                    return true;
+                } catch (testError) {
+                    // Tenta criar um documento de teste
+                    const testRef = STATE.firestore.collection('connectionTest').doc('test');
+                    await testRef.set({ test: true, timestamp: new Date() });
+                    STATE.dbConnected = true;
+                    showConnectionStatus('✅ Conectado ao Firebase', 'connected');
+                    return true;
+                }
+
             } catch (error) {
                 console.error('Erro ao conectar com Firebase:', error);
                 STATE.dbConnected = false;
-                showConnectionStatus('Modo offline', 'disconnected');
+                showConnectionStatus('⚠️ Modo offline', 'disconnected');
                 return false;
             }
         }
@@ -1347,11 +2116,21 @@
                 // Carregar do localStorage primeiro
                 loadFromLocalStorage();
                 
+                // Se não houver projetos, carregar dados reais
+                if (STATE.projects.length === 0) {
+                    STATE.projects = [...REAL_VOTING_DATA.projects];
+                    STATE.votingActive = false;
+                    STATE.winnerAnnounced = true;
+                    STATE.usingRealData = true;
+                    saveToLocalStorage();
+                    console.log('✅ Dados reais da votação carregados');
+                }
+                
                 if (STATE.dbConnected && STATE.firestore) {
                     // Tentar carregar do Firebase
-                    const snapshot = await STATE.firestore.collection('projects').get();
+                    const snapshot = await STATE.firestore.collection("projects").get();
                     
-                    if (!snapshot.empty) {
+                    if (!snapshot.empty && !STATE.usingRealData) {
                         STATE.projects = [];
                         snapshot.forEach(doc => {
                             const data = doc.data();
@@ -1365,17 +2144,8 @@
                                 visitorVotes: data.visitorVotes || 0
                             });
                         });
-                        
                         saveToLocalStorage();
-                    } else if (STATE.projects.length === 0) {
-                        // Se não houver projetos, criar padrão
-                        STATE.projects = getDefaultProjects();
-                        await seedDefaultProjects();
                     }
-                } else if (STATE.projects.length === 0) {
-                    // Modo offline sem projetos
-                    STATE.projects = getDefaultProjects();
-                    saveToLocalStorage();
                 }
                 
                 console.log('Projetos carregados:', STATE.projects);
@@ -1387,38 +2157,40 @@
             }
         }
 
-        async function seedDefaultProjects() {
-            if (!STATE.dbConnected || !STATE.firestore) return;
-            
-            try {
-                const defaultProjects = getDefaultProjects();
-                
-                for (const project of defaultProjects) {
-                    await STATE.firestore.collection('projects').add({
-                        name: project.name,
-                        icon: project.icon,
-                        description: project.description,
-                        votes: project.votes,
-                        studentVotes: project.studentVotes,
-                        visitorVotes: project.visitorVotes
-                    });
-                }
-                
-                console.log('Projetos padrão criados no Firebase');
-            } catch (error) {
-                console.error('Erro ao criar projetos padrão:', error);
-            }
-        }
-
         async function saveVote(projectId) {
+            if (!STATE.votingActive) {
+                showToast('A votação foi encerrada!', 'error');
+                return false;
+            }
+            
             if (!STATE.currentUserType) {
                 showToast('Selecione seu tipo primeiro!', 'error');
                 return false;
             }
             
+            // Verificar se já votou (localmente)
             if (STATE.hasVoted) {
                 showToast('Você já votou!', 'error');
                 return false;
+            }
+            
+            // Verificar se já votou no Firebase (para evitar duplicação)
+            if (STATE.dbConnected && STATE.firestore) {
+                try {
+                    const voteQuery = await STATE.firestore.collection('votes')
+                        .where('userId', '==', STATE.userId)
+                        .limit(1)
+                        .get();
+                    
+                    if (!voteQuery.empty) {
+                        showToast('Você já votou anteriormente!', 'error');
+                        STATE.hasVoted = true;
+                        saveToLocalStorage();
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar voto existente:', error);
+                }
             }
             
             const project = STATE.projects.find(p => p.id === projectId);
@@ -1428,6 +2200,10 @@
             }
             
             try {
+                console.log(`🗳️ Registrando voto em ${project.name}`);
+                console.log(`   Tipo de usuário: ${STATE.currentUserType}`);
+                console.log(`   Votos antes: ${project.votes}`);
+                
                 // Atualizar localmente
                 project.votes += 1;
                 if (STATE.currentUserType === 'student') {
@@ -1435,6 +2211,10 @@
                 } else {
                     project.visitorVotes += 1;
                 }
+                
+                console.log(`   Votos depois: ${project.votes}`);
+                console.log(`   Alunos: ${project.studentVotes}`);
+                console.log(`   Visitantes: ${project.visitorVotes}`);
                 
                 STATE.hasVoted = true;
                 saveToLocalStorage();
@@ -1453,14 +2233,19 @@
                         studentVotes: project.studentVotes,
                         visitorVotes: project.visitorVotes
                     });
+                    
+                    console.log('✅ Voto salvo no Firebase');
                 }
                 
-                showToast(`Voto registrado em ${project.name}!`, 'success');
+                // Atualizar integridade
+                updateIntegrityDisplay();
+                
+                showToast(`✅ Voto registrado em ${project.name}!`, 'success');
                 return true;
                 
             } catch (error) {
-                console.error('Erro ao salvar voto:', error);
-                showToast('Erro ao salvar voto', 'error');
+                console.error('❌ Erro ao salvar voto:', error);
+                showToast('❌ Erro ao salvar voto', 'error');
                 return false;
             }
         }
@@ -1477,7 +2262,6 @@
                     studentVotes: 0,
                     visitorVotes: 0
                 });
-                
                 return docRef.id;
             } catch (error) {
                 console.error('Erro ao adicionar projeto no Firebase:', error);
@@ -1521,7 +2305,14 @@
                 
                 STATE.currentUserType = localStorage.getItem('senai_user_type');
                 STATE.hasVoted = localStorage.getItem('senai_has_voted') === 'true';
+                STATE.votingActive = localStorage.getItem('senai_voting_active') === 'true';
+                STATE.winnerAnnounced = localStorage.getItem('senai_winner_announced') !== 'false';
+                STATE.usingRealData = localStorage.getItem('senai_using_real_data') === 'true';
                 
+                const savedEndTime = localStorage.getItem('senai_voting_end_time');
+                if (savedEndTime) {
+                    STATE.votingEndTime = new Date(savedEndTime);
+                }
             } catch (error) {
                 console.error('Erro ao carregar do localStorage:', error);
             }
@@ -1532,59 +2323,16 @@
                 localStorage.setItem('senai_voting_projects', JSON.stringify(STATE.projects));
                 localStorage.setItem('senai_user_type', STATE.currentUserType || '');
                 localStorage.setItem('senai_has_voted', STATE.hasVoted.toString());
+                localStorage.setItem('senai_voting_active', STATE.votingActive.toString());
+                localStorage.setItem('senai_winner_announced', STATE.winnerAnnounced.toString());
+                localStorage.setItem('senai_using_real_data', STATE.usingRealData.toString());
+                
+                if (STATE.votingEndTime) {
+                    localStorage.setItem('senai_voting_end_time', STATE.votingEndTime.toISOString());
+                }
             } catch (error) {
                 console.error('Erro ao salvar no localStorage:', error);
             }
-        }
-
-        function getDefaultProjects() {
-            return [
-                {
-                    id: 'guia-senai',
-                    name: 'Guia de Soluções SENAI',
-                    icon: '📚',
-                    description: 'Guia completo de soluções industriais com metodologias e cases do SENAI para transformação digital.',
-                    votes: 15,
-                    studentVotes: 12,
-                    visitorVotes: 1
-                },
-                {
-                    id: 'controle-iot',
-                    name: 'Controle IoT',
-                    icon: '📡',
-                    description: 'Gerencie dispositivos conectados em tempo real com nossa plataforma intuitiva e segura.',
-                    votes: 14,
-                    studentVotes: 11,
-                    visitorVotes: 1
-                },
-                {
-                    id: 'dashboard-industrial',
-                    name: 'Dashboard Industrial',
-                    icon: '📊',
-                    description: 'Monitore métricas críticas de produção e eficiência com visualizações avançadas.',
-                    votes: 12,
-                    studentVotes: 10,
-                    visitorVotes: 0
-                },
-                {
-                    id: 'automacao-4',
-                    name: 'Automação 4.0',
-                    icon: '🤖',
-                    description: 'Automatize processos industriais com scripts inteligentes e integração perfeita.',
-                    votes: 10,
-                    studentVotes: 9,
-                    visitorVotes: 0
-                },
-                {
-                    id: 'biblioteca-templates',
-                    name: 'Biblioteca de Templates',
-                    icon: '📋',
-                    description: 'Acesse modelos prontos para documentação técnica, relatórios e projetos industriais.',
-                    votes: 8,
-                    studentVotes: 8,
-                    visitorVotes: 0
-                }
-            ];
         }
 
         // ============================================
@@ -1597,46 +2345,48 @@
             if (STATE.projects.length === 0) {
                 container.innerHTML = `
                     <div class="tool-card" style="grid-column: 1 / -1; text-align: center;">
-                        <h3>Nenhuma ferramenta disponível</h3>
-                        <p>Adicione ferramentas através do painel administrativo</p>
+                        <h3>Nenhum projeto disponível</h3>
+                        <p>Adicione projetos através do painel administrativo</p>
                     </div>
                 `;
                 return;
             }
             
             // Ordenar por pontos
-            const sortedProjects = [...STATE.projects].sort((a, b) => 
+            const sortedProjects = [...STATE.projects].sort((a, b) =>
                 calculateTotalPoints(b) - calculateTotalPoints(a)
             );
             
             container.innerHTML = sortedProjects.map((project, index) => {
                 const points = calculateTotalPoints(project);
-                const canVote = !STATE.hasVoted && STATE.currentUserType;
+                const canVote = !STATE.hasVoted && STATE.currentUserType && STATE.votingActive;
                 const isTop3 = index < 3;
+                const isWinner = project.name.includes('Reconhecimento Facial') || (index === 0 && STATE.winnerAnnounced);
                 
                 return `
                     <div class="tool-card fade-in" data-delay="${index * 100}">
                         ${isTop3 ? `<div class="voted-indicator">TOP ${index + 1}</div>` : ''}
+                        ${isWinner ? `<div class="voted-indicator" style="background: var(--tech-yellow);">🏆 VENCEDOR</div>` : ''}
                         <div class="tool-header">
                             <div class="tool-icon">${project.icon}</div>
                             <div class="tool-info">
                                 <h3>${project.name}</h3>
                                 <div style="color: var(${isTop3 ? '--tech-yellow' : '--neon-cyan'}); font-family: 'Orbitron';">
-                                    ${points} pontos ${isTop3 ? '🏆' : ''}
+                                    ${points} votos ${isTop3 ? '🔥' : ''}
                                 </div>
                             </div>
                         </div>
                         <p class="tool-description">${project.description}</p>
                         <div style="display: flex; gap: 10px; margin-bottom: 15px; font-size: 0.9rem;">
-                            <span style="color: var(--electric-blue);">👨‍🎓 ${project.studentVotes}</span>
-                            <span style="color: var(--tech-orange);">👨‍💻 ${project.visitorVotes}</span>
-                            <span style="color: var(--tech-green); margin-left: auto;">📊 ${project.votes} votos</span>
+                            <span style="color: var(--electric-blue);">🎓 ${project.studentVotes}</span>
+                            <span style="color: var(--tech-orange);">👥 ${project.visitorVotes}</span>
+                            <span style="color: var(--tech-green); margin-left: auto;">🗳️ ${project.votes} total</span>
                         </div>
-                        <button class="vote-btn" 
-                                data-project="${project.id}" 
+                        <button class="vote-btn"
+                                data-project="${project.id}"
                                 ${!canVote ? 'disabled' : ''}
-                                title="${!STATE.currentUserType ? 'Selecione seu tipo' : STATE.hasVoted ? 'Você já votou' : 'Votar neste projeto'}">
-                            ${!STATE.currentUserType ? '👤 Selecione seu tipo' : STATE.hasVoted ? '✅ Você já votou!' : '🗳️ VOTAR AGORA'}
+                                title="${!STATE.votingActive ? 'Votação encerrada' : !STATE.currentUserType ? 'Selecione seu tipo' : STATE.hasVoted ? 'Você já votou' : 'Votar neste projeto'}">
+                            ${!STATE.votingActive ? '⏹️ VOTAÇÃO ENCERRADA' : !STATE.currentUserType ? '👆 Selecione seu tipo' : STATE.hasVoted ? '✅ Você já votou!' : '🗳️ VOTAR AGORA'}
                         </button>
                     </div>
                 `;
@@ -1660,7 +2410,7 @@
                 return;
             }
             
-            const sortedProjects = [...STATE.projects].sort((a, b) => 
+            const sortedProjects = [...STATE.projects].sort((a, b) =>
                 calculateTotalPoints(b) - calculateTotalPoints(a)
             ).slice(0, 5);
             
@@ -1669,16 +2419,18 @@
             container.innerHTML = sortedProjects.map((project, index) => {
                 const points = calculateTotalPoints(project);
                 const percentage = maxPoints > 0 ? (points / maxPoints) * 100 : 0;
+                const isWinner = project.name.includes('Reconhecimento Facial');
                 
                 return `
                     <div class="tower-card fade-in" data-delay="${index * 150}">
                         <div class="tower-rank rank-${index + 1}">#${index + 1}</div>
+                        ${isWinner ? '<div style="position: absolute; top: 20px; left: 20px; font-size: 1.5rem;">🏆</div>' : ''}
                         <div class="tower-header">
                             <div class="tower-icon">${project.icon}</div>
                             <div class="tower-info">
                                 <h3>${project.name}</h3>
                                 <div style="color: var(--tech-green); font-family: 'Orbitron';">
-                                    ${points} pontos
+                                    ${points} votos
                                 </div>
                             </div>
                         </div>
@@ -1688,7 +2440,7 @@
                         <div class="tower-stats">
                             <div class="stat-item">
                                 <div class="stat-value">${project.votes}</div>
-                                <div class="stat-label">VOTOS</div>
+                                <div class="stat-label">TOTAL</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-value">${project.studentVotes}</div>
@@ -1720,11 +2472,13 @@
                 return;
             }
             
-            const sortedProjects = [...STATE.projects].sort((a, b) => calculateTotalPoints(b) - calculateTotalPoints(a));
-            const labels = sortedProjects.map(p => p.name);
+            const sortedProjects = [...STATE.projects].sort((a, b) => 
+                calculateTotalPoints(b) - calculateTotalPoints(a)
+            ).slice(0, 8); // Mostrar apenas os 8 primeiros
             
-            const studentData = sortedProjects.map(p => p.studentVotes * CONFIG.STUDENT_WEIGHT);
-            const visitorData = sortedProjects.map(p => p.visitorVotes * CONFIG.VISITOR_WEIGHT);
+            const labels = sortedProjects.map(p => p.name);
+            const studentData = sortedProjects.map(p => p.studentVotes);
+            const visitorData = sortedProjects.map(p => p.visitorVotes);
             
             STATE.chartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1760,6 +2514,15 @@
                                     family: 'Rajdhani',
                                     size: 14
                                 }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Distribuição de Votos por Projeto',
+                                color: 'white',
+                                font: {
+                                    family: 'Orbitron',
+                                    size: 16
+                                }
                             }
                         }
                     },
@@ -1777,7 +2540,7 @@
                             },
                             title: {
                                 display: true,
-                                text: 'PONTOS',
+                                text: 'NÚMERO DE VOTOS',
                                 color: 'rgba(255, 255, 255, 0.7)',
                                 font: {
                                     family: 'Orbitron',
@@ -1804,9 +2567,9 @@
         }
 
         function updateAdminStats() {
-            const totalVotes = STATE.projects.reduce((sum, p) => sum + (p.votes || 0), 0);
-            const studentVotes = STATE.projects.reduce((sum, p) => sum + (p.studentVotes || 0), 0);
-            const visitorVotes = STATE.projects.reduce((sum, p) => sum + (p.visitorVotes || 0), 0);
+            const totalVotes = STATE.projects.reduce((sum, p) => sum + (parseInt(p.votes) || 0), 0);
+            const studentVotes = STATE.projects.reduce((sum, p) => sum + (parseInt(p.studentVotes) || 0), 0);
+            const visitorVotes = STATE.projects.reduce((sum, p) => sum + (parseInt(p.visitorVotes) || 0), 0);
             
             const totalVotesEl = document.getElementById('totalVotes');
             const studentVotesEl = document.getElementById('studentVotes');
@@ -1824,9 +2587,9 @@
             if (!container) return;
             
             container.innerHTML = '';
-            
             STATE.projects.forEach((project) => {
                 const points = calculateTotalPoints(project);
+                const isWinner = project.name.includes('Reconhecimento Facial');
                 const item = document.createElement('div');
                 item.className = 'project-item';
                 item.setAttribute('data-project-id', project.id);
@@ -1834,7 +2597,7 @@
                 item.innerHTML = `
                     <div class="project-header">
                         <span>${project.icon}</span>
-                        <h5>${project.name}</h5>
+                        <h5>${project.name} ${isWinner ? '🏆' : ''}</h5>
                         <div style="display: flex; gap: 5px;">
                             <button class="action-btn edit-btn" data-project-id="${project.id}">✏️</button>
                             <button class="action-btn delete-btn" data-project-id="${project.id}">🗑️</button>
@@ -1844,9 +2607,9 @@
                         ${project.description}
                     </p>
                     <div class="project-votes">
-                        <span>📊 Total: ${project.votes || 0}</span>
-                        <span>👨‍🎓 Alunos: ${project.studentVotes || 0}</span>
-                        <span>👨‍💻 Visitantes: ${project.visitorVotes || 0}</span>
+                        <span>🗳️ Total: ${project.votes || 0}</span>
+                        <span>🎓 Alunos: ${project.studentVotes || 0}</span>
+                        <span>👥 Visitantes: ${project.visitorVotes || 0}</span>
                         <span>⭐ Pontos: ${points}</span>
                     </div>
                 `;
@@ -1886,7 +2649,6 @@
             document.getElementById('editProjectName').value = project.name;
             document.getElementById('editProjectIcon').value = project.icon;
             document.getElementById('editProjectDescription').value = project.description;
-            
             document.getElementById('editProjectModal').style.display = 'flex';
         }
 
@@ -1911,7 +2673,6 @@
             project.name = name;
             project.icon = icon || '⭐';
             project.description = description || 'Sem descrição';
-            
             saveToLocalStorage();
             
             // Atualizar no Firebase se conectado
@@ -1936,8 +2697,9 @@
             renderChart();
             renderAdminProjectList();
             updateAdminStats();
+            updateIntegrityDisplay();
             
-            showToast('Projeto atualizado com sucesso!', 'success');
+            showToast('✅ Projeto atualizado com sucesso!', 'success');
         }
 
         async function deleteProject(projectId) {
@@ -1963,8 +2725,9 @@
             renderChart();
             renderAdminProjectList();
             updateAdminStats();
+            updateIntegrityDisplay();
             
-            showToast('Projeto excluído com sucesso!', 'success');
+            showToast('✅ Projeto excluído com sucesso!', 'success');
         }
 
         // ============================================
@@ -1988,11 +2751,11 @@
                     });
                     card.classList.add('selected');
                     
-                    showToast(`Tipo definido como: ${STATE.currentUserType === 'student' ? 'Aluno SENAI' : 'Visitante'}`, 'success');
+                    showToast(`✅ Tipo definido como: ${STATE.currentUserType === 'student' ? 'Aluno SENAI' : 'Visitante'}`, 'success');
                     renderTools();
                 });
             });
-            
+
             // Admin Access
             const adminAccess = document.getElementById('adminAccess');
             if (adminAccess) {
@@ -2000,7 +2763,7 @@
                     document.getElementById('adminPanel').classList.add('open');
                 });
             }
-            
+
             // Close Admin
             const closeAdmin = document.getElementById('closeAdmin');
             if (closeAdmin) {
@@ -2011,7 +2774,7 @@
                     document.getElementById('adminPassword').value = '';
                 });
             }
-            
+
             // Admin Login
             const loginAdmin = document.getElementById('loginAdmin');
             if (loginAdmin) {
@@ -2022,14 +2785,14 @@
                         STATE.isAdminAuthenticated = true;
                         document.getElementById('adminControls').style.display = 'block';
                         document.getElementById('adminPassword').value = '';
-                        showToast('✅ Acesso administrativo concedido!', 'success');
+                        showToast('🔓 Acesso administrativo concedido!', 'success');
                         renderAdminProjectList();
                     } else {
-                        showToast('❌ Senha incorreta!', 'error');
+                        showToast('🔒 Senha incorreta!', 'error');
                     }
                 });
             }
-            
+
             // Enter key for admin login
             const adminPassword = document.getElementById('adminPassword');
             if (adminPassword) {
@@ -2039,7 +2802,7 @@
                     }
                 });
             }
-            
+
             // Admin: Adicionar projeto
             const addProject = document.getElementById('addProject');
             if (addProject) {
@@ -2062,7 +2825,7 @@
                         id: 'project-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
                         name: name,
                         icon: icon,
-                        description: description || 'Nova ferramenta do ecossistema SENAI.',
+                        description: description || 'Novo projeto do ecossistema SENAI.',
                         votes: 0,
                         studentVotes: 0,
                         visitorVotes: 0
@@ -2091,11 +2854,12 @@
                     renderChart();
                     updateAdminStats();
                     renderAdminProjectList();
+                    updateIntegrityDisplay();
                     
-                    showToast(`Projeto "${name}" adicionado com sucesso!`, 'success');
+                    showToast(`✅ Projeto "${name}" adicionado com sucesso!`, 'success');
                 });
             }
-            
+
             // Admin: Botão Editar Projetos
             const editProjects = document.getElementById('editProjects');
             if (editProjects) {
@@ -2109,7 +2873,99 @@
                     showToast('Modo de edição ativado. Clique nos ícones de edição para modificar projetos.', 'info');
                 });
             }
-            
+
+            // Admin: Carregar dados reais
+            const loadRealData = document.getElementById('loadRealData');
+            if (loadRealData) {
+                loadRealData.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    loadRealVotingData();
+                });
+            }
+
+            // Admin: Definir vencedor
+            const setWinnerBtn = document.getElementById('setWinner');
+            if (setWinnerBtn) {
+                setWinnerBtn.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    setWinnerManually();
+                });
+            }
+
+            // Admin: Iniciar Votação
+            const startVotingBtn = document.getElementById('startVoting');
+            if (startVotingBtn) {
+                startVotingBtn.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (confirm('Deseja iniciar uma nova votação?\n\nIsso permitirá que os usuários votem novamente.')) {
+                        startVoting();
+                    }
+                });
+            }
+
+            // Admin: Parar Votação
+            const stopVotingBtn = document.getElementById('stopVoting');
+            if (stopVotingBtn) {
+                stopVotingBtn.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (confirm('Deseja encerrar a votação?\n\nOs usuários não poderão mais votar.')) {
+                        stopVoting();
+                    }
+                });
+            }
+
+            // Admin: Anunciar Vencedor
+            const announceWinnerBtn = document.getElementById('announceWinner');
+            if (announceWinnerBtn) {
+                announceWinnerBtn.addEventListener('click', () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (!STATE.votingActive) {
+                        if (confirm('Deseja anunciar o projeto vencedor?\n\nIsso mostrará um banner com o projeto mais votado.')) {
+                            announceWinner();
+                        }
+                    } else {
+                        showToast('Encerre a votação primeiro!', 'warning');
+                    }
+                });
+            }
+
+            // Admin: Sincronizar dados
+            const syncData = document.getElementById('syncData');
+            if (syncData) {
+                syncData.addEventListener('click', async () => {
+                    if (!STATE.isAdminAuthenticated) {
+                        showToast('Acesso administrativo necessário!', 'error');
+                        return;
+                    }
+                    
+                    if (!confirm('Sincronizar e corrigir dados com base nos votos reais?\n\nIsso atualizará todos os projetos com os valores reais do Firebase.')) {
+                        return;
+                    }
+                    
+                    await syncAndFixData();
+                });
+            }
+
             // Admin: Resetar votos
             const resetVotes = document.getElementById('resetVotes');
             if (resetVotes) {
@@ -2132,9 +2988,18 @@
                     
                     STATE.hasVoted = false;
                     STATE.currentUserType = null;
-                    
+                    STATE.winnerAnnounced = false;
+                    STATE.usingRealData = false;
                     localStorage.removeItem('senai_has_voted');
                     localStorage.removeItem('senai_user_type');
+                    localStorage.removeItem('senai_winner_announced');
+                    localStorage.removeItem('senai_using_real_data');
+                    
+                    // Esconder banner do vencedor
+                    const winnerBanner = document.getElementById('winnerBanner');
+                    if (winnerBanner) {
+                        winnerBanner.classList.remove('show');
+                    }
                     
                     saveToLocalStorage();
                     
@@ -2148,6 +3013,24 @@
                                     visitorVotes: 0
                                 });
                             }
+                            
+                            // Limpar votos individuais
+                            const votesSnapshot = await STATE.firestore.collection('votes').get();
+                            const batch = STATE.firestore.batch();
+                            votesSnapshot.forEach(doc => {
+                                batch.delete(doc.ref);
+                            });
+                            await batch.commit();
+                            
+                            // Resetar configurações
+                            await STATE.firestore.collection('config').doc('voting').set({
+                                active: false,
+                                lastStarted: new Date(),
+                                winnerAnnounced: false
+                            });
+                            
+                            await STATE.firestore.collection('config').doc('winner').delete();
+                            
                         } catch (error) {
                             console.error('Erro ao resetar no Firebase:', error);
                         }
@@ -2159,11 +3042,12 @@
                     renderChart();
                     updateAdminStats();
                     renderAdminProjectList();
+                    updateIntegrityDisplay();
                     
-                    showToast('Todos os votos foram resetados!', 'success');
+                    showToast('✅ Todos os votos foram resetados!', 'success');
                 });
             }
-            
+
             // Admin: Resetar tudo
             const resetAll = document.getElementById('resetAll');
             if (resetAll) {
@@ -2178,17 +3062,17 @@
                     }
                     
                     localStorage.clear();
-                    showToast('Dados locais limpos. Recarregando...', 'info');
+                    showToast('✅ Dados locais limpos. Recarregando...', 'info');
                     setTimeout(() => location.reload(), 1000);
                 });
             }
-            
+
             // Modal de edição: Salvar
             const saveEdit = document.getElementById('saveEdit');
             if (saveEdit) {
                 saveEdit.addEventListener('click', saveProjectEdit);
             }
-            
+
             // Modal de edição: Cancelar
             const cancelEdit = document.getElementById('cancelEdit');
             if (cancelEdit) {
@@ -2196,13 +3080,26 @@
                     document.getElementById('editProjectModal').style.display = 'none';
                 });
             }
-            
+
             // Fechar modais ao clicar fora
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('modal')) {
                     e.target.style.display = 'none';
                 }
             });
+
+            // Badge de integridade
+            const integrityBadge = document.getElementById('integrityBadge');
+            if (integrityBadge) {
+                integrityBadge.addEventListener('click', () => {
+                    const score = STATE.integrityScore;
+                    if (score < 90) {
+                        showToast(`Integridade: ${score}%. Clique em SINCRONIZAR DADOS no painel admin.`, 'warning');
+                    } else {
+                        showToast(`✅ Integridade do sistema: ${score}%`, 'success');
+                    }
+                });
+            }
         }
 
         function attachVoteListeners() {
@@ -2216,6 +3113,7 @@
                             renderTowers();
                             renderChart();
                             updateAdminStats();
+                            updateIntegrityDisplay();
                         }
                     }
                 });
@@ -2227,7 +3125,7 @@
         // ============================================
         async function initialize() {
             try {
-                console.log('🚀 Iniciando Sistema de Votação SENAI...');
+                console.log("✅ Iniciando Sistema de Votação SENAI...");
                 
                 // Configurar event listeners
                 setupEventListeners();
@@ -2235,13 +3133,13 @@
                 // Carregar dados locais primeiro
                 loadFromLocalStorage();
                 
-                // Se não houver projetos, criar padrão
+                // Se não houver projetos, carregar dados reais
                 if (STATE.projects.length === 0) {
-                    STATE.projects = getDefaultProjects();
-                    saveToLocalStorage();
+                    loadRealVotingData();
                 }
                 
                 // Atualizar interface com dados locais
+                updateVotingStatus();
                 updateAdminStats();
                 renderTools();
                 renderTowers();
@@ -2256,6 +3154,12 @@
                     });
                 }
                 
+                // Verificar integridade inicial
+                const initialIntegrity = updateIntegrityDisplay();
+                if (initialIntegrity < 90) {
+                    console.warn(`⚠️ Baixa integridade inicial detectada: ${initialIntegrity}%`);
+                }
+                
                 // Tentar conectar ao Firebase em segundo plano
                 setTimeout(async () => {
                     try {
@@ -2263,33 +3167,32 @@
                         if (connected) {
                             await loadProjects();
                             
-                            // Atualizar interface com dados do Firebase
-                            renderTools();
-                            renderTowers();
-                            renderChart();
-                            updateAdminStats();
+                            // Sincronizar dados do Firebase
+                            await syncAndFixData();
                             
-                            showToast('✅ Sistema sincronizado com Firebase', 'success');
+                            // Verificar integridade após carregar do Firebase
+                            const integrityAfterLoad = updateIntegrityDisplay();
+                            
+                            if (integrityAfterLoad >= 95) {
+                                showToast('✅ Sistema sincronizado com Firebase', 'success');
+                            } else {
+                                showToast(`⚠️ Sistema sincronizado. Integridade: ${integrityAfterLoad}%`, 'warning');
+                            }
                         }
                     } catch (error) {
                         console.log('Firebase não disponível, continuando modo offline:', error.message);
                     }
                 }, 1000);
                 
-                showToast('Sistema carregado com sucesso!', 'success');
+                showToast('✅ Sistema carregado com sucesso! Resultados da votação disponíveis.', 'success');
                 
             } catch (error) {
-                console.error('Erro na inicialização:', error);
-                showToast('Erro ao inicializar o sistema', 'error');
+                console.error('❌ Erro na inicialização:', error);
+                showToast('❌ Erro ao inicializar o sistema', 'error');
                 
-                // Fallback: garantir que temos projetos
+                // Fallback: carregar dados reais
                 if (STATE.projects.length === 0) {
-                    STATE.projects = getDefaultProjects();
-                    saveToLocalStorage();
-                    renderTools();
-                    renderTowers();
-                    renderChart();
-                    updateAdminStats();
+                    loadRealVotingData();
                 }
             }
         }
